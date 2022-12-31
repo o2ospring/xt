@@ -24,7 +24,7 @@
 将模块源文件、文件包含路径添加到工程，示例：
 2、加入初始函数
 在应用初始化函数中加入模块初始化，示例：
-void rt_init_thread_entry(void *p_arg) { . . #if (XT_APP_WIZNETVOFA_EN == XT_DEF_ENABLED) 	xt_wizvofa_init(); #endif 	. . #if (XT_APP_WIZNETVOFA_EN == XT_DEF_ENABLED) 	xt_wizvofa_open(); #endif 	.</description>
+void rt_init_thread_entry(void *p_arg) { . . #if (XT_APP_WIZNETVOFA_EN == XT_DEF_ENABLED) 	xt_wizvofa_init(); #endif 	. . #if (XT_APP_WIZNETVOFA_EN == XT_DEF_ENABLED) 	#if (XT_WIZVOFA_POWERON_EN !</description>
     </item>
     
     <item>
@@ -182,7 +182,7 @@ make clean //清除 make all //编译 make download //烧录 make debug //调试
       
       <guid>https://o2ospring.github.io/xt/post/20221010/</guid>
       <description>XT 技术联合小组  XT 技术联合小组，由一群有梦想的技术工程师组成！【小组代号】使用 XT 作为小组代号，灵感来源 X 战警，表示技术联合小组是一支具有超强战斗力的团队。【小组宗旨】共同搭建一个共性技术开发平台，加速技术成果转化，推动小组成员技术提升，让成员拥有团队的技术力量，充分体现团队技术价值。【2022 目标】搭建通用技术开发平台、DALI 灯具开发平台、 KNX 系统开发平台。【注意事项】由于技术联合小组是自由组织，相关的技术只限于小组成员使用，在任职公司禁止以开源方式使用，避免与公司产生技术知识产权纠纷。
- 技术平台  [2022-10-11] 软件技术规范 [2022-10-12] 软件平台规划 [2022-11-28] 软件平台使用 [2022-11-23] 红外发送服务模块 [2022-11-27] 串行通信服务模块 [2022-12-01] 串口虚拟示波器模块 [2022-12-03] VOFA+串口示波器 [2022-12-05] 无序控制事件服务模块 [2022-12-10] 网络服务模块(硬栈) [2022-12-16] VOFA+网络示波器  技术提升 </description>
+ 技术平台  [2022-10-11] 软件技术规范 [2022-10-12] 软件平台规划 [2022-11-28] 软件平台使用 [2022-11-23] 红外发送服务模块 [2022-11-27] 串行通信服务模块 [2022-12-01] 串口虚拟示波器 [2022-12-03] VOFA+串口示波器 [2022-12-05] 无序控制事件服务模块 [2022-12-10] 网络服务模块(硬栈) [2022-12-16] VOFA+网络示波器  技术提升 </description>
     </item>
     
   </channel>
