@@ -172,7 +172,7 @@
 </span><span style="color:#75715e"></span>	.
 	.
 }
-</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_HARD_INIT_2_TAB_EXPORT(func,name)</code>自动调用函数进行初始化！</p>
+</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_HARD_INIT_2_TAB_EXPORT(func,desc)</code>自动调用函数进行初始化！</p>
 <p>4、加入超时计数<br>
 在工程硬件定时器中加入模块超时计数处理，示例：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bsp_tim2_init</span>(<span style="color:#66d9ef">void</span>)
@@ -253,13 +253,13 @@ xt_scom_obj_t app_scom_obj;  <span style="color:#75715e">//串行通信服务应
 </span><span style="color:#75715e"></span>	app_scom_obj.rx_buf_size      <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(app_scom_rx_buf); <span style="color:#75715e">//【协议属性】：接收缓冲大小（0:不支持接收，★及【硬件层】可强制设置为0★）
 </span><span style="color:#75715e"></span>	app_scom_obj.tx_buf_size      <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(app_scom_tx_buf); <span style="color:#75715e">//【协议属性】：发送缓冲大小（0:不支持发送，★及【硬件层】可强制设置为0★）
 </span><span style="color:#75715e"></span>
-	app_scom_obj.p_scom_open_fn   <span style="color:#f92672">=</span> app_scom_open_cb;        <span style="color:#75715e">//【应用层服务】：串行通信服务成功打开协同操作函数（常用于设置上层应用标志）
-</span><span style="color:#75715e"></span>	app_scom_obj.p_scom_close_fn  <span style="color:#f92672">=</span> app_scom_close_cb;       <span style="color:#75715e">//【应用层服务】：串行通信服务成功关闭协同操作函数（常用于设置上层应用标志）
-</span><span style="color:#75715e"></span>	app_scom_obj.p_tx_complete_fn <span style="color:#f92672">=</span> app_scom_tx_complete_cb; <span style="color:#75715e">//【应用层服务】：中断中完成发送的通知函数        （内参传递:void）
-</span><span style="color:#75715e"></span>	app_scom_obj.p_rx_data1_fn    <span style="color:#f92672">=</span> app_scom_rx_data1_cb;    <span style="color:#75715e">//【应用层服务】：中断中接收到第一字节数据通知函数（内参传递:pob-&gt;p_rx_buf）
-</span><span style="color:#75715e"></span>	app_scom_obj.p_rx_data_fn     <span style="color:#f92672">=</span> app_scom_rx_data_cb;     <span style="color:#75715e">//【应用层服务】：中断中接收到整一组数据的传递函数（内参传递:pob-&gt;p_rx_buf, size）
+	app_scom_obj.p_scom_open_fn   <span style="color:#f92672">=</span> app_scom_open_cb;        <span style="color:#75715e">//【应用层服务】：注册串行通信服务成功打开协同操作函数（常用于设置上层应用标志）
+</span><span style="color:#75715e"></span>	app_scom_obj.p_scom_close_fn  <span style="color:#f92672">=</span> app_scom_close_cb;       <span style="color:#75715e">//【应用层服务】：注册串行通信服务成功关闭协同操作函数（常用于设置上层应用标志）
+</span><span style="color:#75715e"></span>	app_scom_obj.p_tx_complete_fn <span style="color:#f92672">=</span> app_scom_tx_complete_cb; <span style="color:#75715e">//【应用层服务】：注册中断中完成发送的通知函数        （内参传递:void）
+</span><span style="color:#75715e"></span>	app_scom_obj.p_rx_data1_fn    <span style="color:#f92672">=</span> app_scom_rx_data1_cb;    <span style="color:#75715e">//【应用层服务】：注册中断中接收到第一字节数据通知函数（内参传递:pob-&gt;p_rx_buf）
+</span><span style="color:#75715e"></span>	app_scom_obj.p_rx_data_fn     <span style="color:#f92672">=</span> app_scom_rx_data_cb;     <span style="color:#75715e">//【应用层服务】：注册中断中接收到整一组数据的传递函数（内参传递:pob-&gt;p_rx_buf, size）
 </span><span style="color:#75715e"></span>
-	app_scom_obj.p_hw_open_fn     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;                       <span style="color:#75715e">//【硬件层服务】：本应用模块不提供硬件驱动程序
+	app_scom_obj.p_hw_open_fn     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;                       <span style="color:#75715e">//【硬件层服务】：注册硬件驱动程序（0:本应用不提供硬件驱动程序）
 </span><span style="color:#75715e"></span>
 	<span style="color:#66d9ef">if</span> (xt_scom_open(<span style="color:#f92672">&amp;</span>app_scom_obj, XT_SCOM_TYPE_DATA_FRAME<span style="color:#75715e">/*数据帧*/</span>) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>)
 	{
@@ -284,13 +284,13 @@ xt_scom_obj_t app_scom_obj;  <span style="color:#75715e">//串行通信服务应
 </span><span style="color:#75715e">	app_scom_obj.rx_buf_size      = sizeof(app_scom_rx_buf); //【协议属性】：接收缓冲大小（0:不支持接收，★及【硬件层】可强制设置为0★）
 </span><span style="color:#75715e">	app_scom_obj.tx_buf_size      = sizeof(app_scom_tx_buf); //【协议属性】：发送缓冲大小（0:不支持发送，★及【硬件层】可强制设置为0★）
 </span><span style="color:#75715e">
-</span><span style="color:#75715e">	app_scom_obj.p_scom_open_fn   = app_scom_open_cb;        //【应用层服务】：串行通信服务成功打开协同操作函数（常用于设置上层应用标志）
-</span><span style="color:#75715e">	app_scom_obj.p_scom_close_fn  = app_scom_close_cb;       //【应用层服务】：串行通信服务成功关闭协同操作函数（常用于设置上层应用标志）
-</span><span style="color:#75715e">	app_scom_obj.p_tx_complete_fn = app_scom_tx_complete_cb; //【应用层服务】：中断中完成发送的通知函数        （内参传递:void）
-</span><span style="color:#75715e">	app_scom_obj.p_rx_data1_fn    = app_scom_rx_data1_cb;    //【应用层服务】：中断中接收到第一字节数据通知函数（内参传递:pob-&gt;p_rx_buf）
-</span><span style="color:#75715e">	app_scom_obj.p_rx_data_fn     = app_scom_rx_data_cb;     //【应用层服务】：中断中接收到整一组数据的传递函数（内参传递:pob-&gt;p_rx_buf, size）
+</span><span style="color:#75715e">	app_scom_obj.p_scom_open_fn   = app_scom_open_cb;        //【应用层服务】：注册串行通信服务成功打开协同操作函数（常用于设置上层应用标志）
+</span><span style="color:#75715e">	app_scom_obj.p_scom_close_fn  = app_scom_close_cb;       //【应用层服务】：注册串行通信服务成功关闭协同操作函数（常用于设置上层应用标志）
+</span><span style="color:#75715e">	app_scom_obj.p_tx_complete_fn = app_scom_tx_complete_cb; //【应用层服务】：注册中断中完成发送的通知函数        （内参传递:void）
+</span><span style="color:#75715e">	app_scom_obj.p_rx_data1_fn    = app_scom_rx_data1_cb;    //【应用层服务】：注册中断中接收到第一字节数据通知函数（内参传递:pob-&gt;p_rx_buf）
+</span><span style="color:#75715e">	app_scom_obj.p_rx_data_fn     = app_scom_rx_data_cb;     //【应用层服务】：注册中断中接收到整一组数据的传递函数（内参传递:pob-&gt;p_rx_buf, size）
 </span><span style="color:#75715e">
-</span><span style="color:#75715e">	app_scom_obj.p_hw_open_fn     = 0;                       //【硬件层服务】：本应用模块不提供硬件驱动程序
+</span><span style="color:#75715e">	app_scom_obj.p_hw_open_fn     = 0;                       //【硬件层服务】：注册硬件驱动程序（0:本应用不提供硬件驱动程序）
 </span><span style="color:#75715e">
 </span><span style="color:#75715e">	if (xt_scom_open(&amp;app_scom_obj, XT_SCOM_TYPE_DATA_STREAM//字符串//) &lt; 0)
 </span><span style="color:#75715e">	{
@@ -317,13 +317,13 @@ xt_scom_obj_t app_scom_obj;  <span style="color:#75715e">//串行通信服务应
 </span><span style="color:#75715e">	app_scom_obj.rx_buf_size      = sizeof(app_scom_rx_buf); //【协议属性】：接收缓冲大小（0:不支持接收，★及【硬件层】可强制设置为0★）
 </span><span style="color:#75715e">	app_scom_obj.tx_buf_size      = sizeof(app_scom_tx_buf); //【协议属性】：发送缓冲大小（0:不支持发送，★及【硬件层】可强制设置为0★）
 </span><span style="color:#75715e">
-</span><span style="color:#75715e">	app_scom_obj.p_scom_open_fn   = app_scom_open_cb;        //【应用层服务】：串行通信服务成功打开协同操作函数（常用于设置上层应用标志）
-</span><span style="color:#75715e">	app_scom_obj.p_scom_close_fn  = app_scom_close_cb;       //【应用层服务】：串行通信服务成功关闭协同操作函数（常用于设置上层应用标志）
-</span><span style="color:#75715e">	app_scom_obj.p_tx_complete_fn = app_scom_tx_complete_cb; //【应用层服务】：中断中完成发送的通知函数        （内参传递:void）
-</span><span style="color:#75715e">	app_scom_obj.p_rx_data1_fn    = app_scom_rx_data1_cb;    //【应用层服务】：中断中接收到第一字节数据通知函数（内参传递:pob-&gt;p_rx_buf）
-</span><span style="color:#75715e">	app_scom_obj.p_rx_data_fn     = app_scom_rx_data_cb;     //【应用层服务】：中断中接收到整一组数据的传递函数（内参传递:pob-&gt;p_rx_buf, size）
+</span><span style="color:#75715e">	app_scom_obj.p_scom_open_fn   = app_scom_open_cb;        //【应用层服务】：注册串行通信服务成功打开协同操作函数（常用于设置上层应用标志）
+</span><span style="color:#75715e">	app_scom_obj.p_scom_close_fn  = app_scom_close_cb;       //【应用层服务】：注册串行通信服务成功关闭协同操作函数（常用于设置上层应用标志）
+</span><span style="color:#75715e">	app_scom_obj.p_tx_complete_fn = app_scom_tx_complete_cb; //【应用层服务】：注册中断中完成发送的通知函数        （内参传递:void）
+</span><span style="color:#75715e">	app_scom_obj.p_rx_data1_fn    = app_scom_rx_data1_cb;    //【应用层服务】：注册中断中接收到第一字节数据通知函数（内参传递:pob-&gt;p_rx_buf）
+</span><span style="color:#75715e">	app_scom_obj.p_rx_data_fn     = app_scom_rx_data_cb;     //【应用层服务】：注册中断中接收到整一组数据的传递函数（内参传递:pob-&gt;p_rx_buf, size）
 </span><span style="color:#75715e">
-</span><span style="color:#75715e">	app_scom_obj.p_hw_open_fn     = 0;                       //【硬件层服务】：本应用模块不提供硬件驱动程序
+</span><span style="color:#75715e">	app_scom_obj.p_hw_open_fn     = 0;                       //【硬件层服务】：注册硬件驱动程序（0:本应用不提供硬件驱动程序）
 </span><span style="color:#75715e">
 </span><span style="color:#75715e">	if (xt_scom_open(&amp;app_scom_obj, XT_SCOM_TYPE_DATA_FRAME//数据帧//) &lt; 0)
 </span><span style="color:#75715e">	{
@@ -423,7 +423,7 @@ xt_scom_obj_t app_scom_obj;  <span style="color:#75715e">//串行通信服务应
 {
 	<span style="color:#75715e">//根据实际把数据转传给应用程序!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 </span><span style="color:#75715e"></span>	<span style="color:#75715e">//驱动层已初步将数据分帧,不过应用层还需要进一步判断分帧是否正确!
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//如果MODBUS这类协议通过两字节间隔时间来分帧,要判断是否成功分帧：if (p_scom-&gt;rx_tim_flag &gt;= 2)
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">//如果MODBUS这类协议通过两字节间隔时间来分帧,要判断是否成功分帧：if (p_scom-&gt;rx_tim_flag &gt;= 3)
 </span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0xFFFF</span>;
 }
 </code></pre></div>
@@ -457,7 +457,7 @@ xt_scom_obj_t app_scom_obj;  <span style="color:#75715e">//串行通信服务应
 
 </main>
     <footer class="site-footer clearfix">
-        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2022</section>
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
         
         <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
         

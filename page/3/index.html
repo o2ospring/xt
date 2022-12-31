@@ -91,17 +91,22 @@
         
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221203/">VOFA&#43; 串口虚拟数字示波器</a></h2>
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20230223/">CRC 校验算法</a></h2>
     </header>
     <section class="post-excerpt">
       <p>
           <section class="post-content">
-            <h3 id="一构架">一、构架</h3>
-<p>1、功能简介<br>
-串口虚拟数字示波器模块为我们将数据通过串口传输到 PC 软件上，并以示波曲线方式显示出来，方便我们对数据的分析，提高调试效率。它提供三种操作接口：修改一路、多路、多路连续通道，并发送所有通道状态。虚拟数字示波器同时具备编写控件向设备发送控制命令！</p>
-<p>2、模块架构<br>
-<img src="../img/20221203_1_01.jpg" alt="模块架构"></p>
-<p>3、环境要求  </p>
+            <h3 id="一说明">一、说明</h3>
+<p>1、功能简介</p>
+<ul>
+<li>CRC 循环冗余校验（Cyclic Redundancy Check）是一种根据网络数据包或计算机文件等数据产生简短固定位数校验码的一种信道编码技术，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的。CRC 成为计算机信息通信领域最为普遍的校验方式。常见应用有以太网/USB通信，压缩解压，视频编码，图像存储，磁盘读写等。</li>
+<li>CRC 所操作的原始数据以【大端】序列格式进行处理与传送，不过本 CRC 模块运算函数入口指向的原始数据指针是【单字节指针】，所以一般不需要理会大小端问题。</li>
+<li>特别说明：为什么 STM32 处理器的硬件 CRC 运算与本模块运算的结果不一样？因为 STM32 处理器为【小端】数据处理方式，CRC 规则要求为【大端】数据处理方式（标准的 CRC 函数的入口以及内部处理都是以<strong>字节</strong>作为基本处理单元，这样可以避免出现大小端格式问题，同时避免尾部 4 字节补齐填充问题）。</li>
+<li>本模块提供 21 个标准 CRC 参数模型。</li>
+</ul>
+<p><img src="../img/20230223_1_01.jpg" alt="21 个标准 CRC 参数模型"></p>
+<p>资源：<a href="https://github.com/whik/crc-lib-c">github 仓库</a></p>
+<p>2、环境要求  </p>
 <table>
 <thead>
 <tr>
@@ -112,91 +117,33 @@
 <tbody>
 <tr>
 <td style="text-align:left">软件环境</td>
-<td style="text-align:left">实时操作系统 或 裸机环境 均可</td>
+<td style="text-align:left">无特别要求</td>
 </tr>
 <tr>
 <td style="text-align:left">硬件环境</td>
-<td style="text-align:left">STM8 或 STM32F103 及更高性能 MCU</td>
+<td style="text-align:left">无特别要求</td>
 </tr>
 <tr>
 <td style="text-align:left">依赖环境</td>
-<td style="text-align:left">依赖【xt_scom】串行通信服务模块</td>
+<td style="text-align:left">无特别要求</td>
 </tr>
 </tbody>
 </table>
-<p>4、软件简介<br>
-我们做项目时，往往需要查看数据曲线。例如：查看单片机使用率的曲线、查看 AD 读出温度值的曲线、查看电机转速的曲线…… 那么有没有像示波器一样显示曲线图的工具呢？当然是有的，今天为大家介绍一款虚拟示波器软件 VOFA+（伏特加）。VOFA+ 虚拟示波器是一个电脑软件，它将通过串口、UDP、TCP 传输给电脑的数据以示波曲线方式显示出来，方便我们对数据分析，是您必不可缺的开发助手。VOFA+ 支持 FireWater、JustFloat、RawData 三种数据格式，支持多通道的波形显示，支持 X、Y 轴任意缩放及移动，支持打开与保存波形数据。</p>
-<p>© 本段介绍摘自《一春又一春》博文 ©</p>
 <h3 id="二移植">二、移植</h3>
 <p>1、添加源文件<br>
 将模块源文件、文件包含路径添加到工程，示例：</p>
-<p><img src="../img/20221203_2_01.jpg" alt="添加源文件到工程"></p>
-<p>2、加入初始函数<br>
-在应用初始化函数中加入模块初始化，示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rt_init_thread_entry</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>p_arg)
-{
-	.
-	.
-	<span style="color:#75715e">#if (XT_APP_SCOMVOFA_EN == XT_DEF_ENABLED)
-</span><span style="color:#75715e"></span>	xt_scomvofa_init();
-	<span style="color:#75715e">#endif
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">#if (XT_APP_SCOMVOFA_EN == XT_DEF_ENABLED)
-</span><span style="color:#75715e"></span>	xt_scomvofa_open();
-	<span style="color:#75715e">#endif
-</span><span style="color:#75715e"></span>	.
-	.
-}
-</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_MSG_INIT_2_TAB_EXPORT(func,name)</code>自动调用函数进行初始化！</p>
-<p>3、包含头文件<br>
+<p><img src="../img/20230223_2_01.jpg" alt="添加源文件到工程"></p>
+<p>2、包含头文件<br>
 在使用模块的应用程序中加入头文件包含，示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#if (XT_APP_SCOMVOFA_EN == XT_DEF_ENABLED)
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_scom_vofa.h&#34;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#endif
-</span></code></pre></div><p>4、配置模块参数<br>
-根据实际的使用环境配置模块参数，示例：</p>
-<p><img src="../img/20221203_2_05.jpg" alt="配置模块参数"></p>
-<p>补充说明：由于标准模块是不允许用户修改的，所以在应用时请启用头文件映射，在映射头文件修改配置！</p>
-<p>5、使能模块开关<br>
-在工程头文件《application.h》统一使能模块开关，示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define XT_DEF_DISABLED                 0                               </span><span style="color:#75715e">/* 禁用模块                     */</span><span style="color:#75715e">
-</span><span style="color:#75715e">#define XT_DEF_ENABLED                  1                               </span><span style="color:#75715e">/* 使能模块                     */</span><span style="color:#75715e">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;crcLib.h&#34;</span><span style="color:#75715e">
+</span></code></pre></div><h3 id="三使用">三、使用</h3>
+<p>1、应用示例</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;crcLib.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
-<span style="color:#75715e">#define XT_APP_DEBUG                    20221203                        </span><span style="color:#75715e">/* 开启演示                     */</span><span style="color:#75715e">
-</span><span style="color:#75715e">#define __XT_SCOM_VOFA_REMAP_H
-</span><span style="color:#75715e">#ifndef XT_APP_SCOMVOFA_EN
-</span><span style="color:#75715e">#define XT_APP_SCOMVOFA_EN              XT_DEF_ENABLED                  </span><span style="color:#75715e">/* 串口虚拟数字示波器(VOFA+)    */</span><span style="color:#75715e">
-</span><span style="color:#75715e">#endif
-</span><span style="color:#75715e">#define __XT_SCOM_REMAP_H
-</span><span style="color:#75715e">#ifndef XT_APP_SCOM_EN
-</span><span style="color:#75715e">#define XT_APP_SCOM_EN                  XT_DEF_ENABLED                  </span><span style="color:#75715e">/* 串行通信服务模块             */</span><span style="color:#75715e">
-</span><span style="color:#75715e">#endif
-</span></code></pre></div><p>6、依赖模块说明<br>
-本模块依赖于串行通信服务模块【xt_scom】，关于模块移植请参考其说明文档！</p>
-<h3 id="三使用">三、使用</h3>
-<p>1、应用示例<br>
-本示范只是以最简单方式展示模块的基本使用，并非一个应用实例！</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_scom_vofa.h&#34;</span><span style="color:#75715e">
+<span style="color:#66d9ef">uint8_t</span>  buf[] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">0x1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">0x67</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">9</span>, <span style="color:#ae81ff">0x10</span>, <span style="color:#ae81ff">0xAB</span>, <span style="color:#ae81ff">0xCD</span>, <span style="color:#ae81ff">0xEF</span>}; <span style="color:#75715e">//要计算的数据
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint32_t</span> crc; <span style="color:#75715e">//计算结果缓存
 </span><span style="color:#75715e"></span>
-<span style="color:#75715e">//直接在应用中调用函数发送，例如显示 CPU 占有率：
-</span><span style="color:#75715e"></span>xt_scomvofa_1ch_put(<span style="color:#ae81ff">0x80</span>, (<span style="color:#66d9ef">float</span>)(cpu10000_usage_get(<span style="color:#ae81ff">1</span>)) <span style="color:#f92672">/</span> <span style="color:#ae81ff">100</span>);
-
-<span style="color:#75715e">//应用示例[1]：单独修改 CH1 并将所有通道数据以【阻塞】方式发送到虚拟示波器显示
-</span><span style="color:#75715e"></span>xt_scomvofa_1ch_put(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">100</span>);
-
-<span style="color:#75715e">//应用示例[2]：单独修改 CH1 并将所有通道数据以【非阻塞】方式发送到虚拟示波器显示
-</span><span style="color:#75715e"></span>xt_scomvofa_1ch_put(<span style="color:#ae81ff">0x80</span>, <span style="color:#ae81ff">100</span>);
-
-<span style="color:#75715e">//应用示例[3]：同时修改 CH1、CH3 并将所有通道数据以【阻塞】方式发送到虚拟示波器显示
-</span><span style="color:#75715e"></span>xt_scomvofa_4ch_put(<span style="color:#ae81ff">0x01</span><span style="color:#f92672">|</span><span style="color:#ae81ff">0x04</span>, <span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0</span>);
-
-<span style="color:#75715e">//应用示例[4]：同时修改 CH1、CH3 并将所有通道数据以【非阻塞】方式发送到虚拟示波器显示
-</span><span style="color:#75715e"></span>xt_scomvofa_4ch_put(<span style="color:#ae81ff">0x80</span><span style="color:#f92672">|</span><span style="color:#ae81ff">0x01</span><span style="color:#f92672">|</span><span style="color:#ae81ff">0x04</span>, <span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0</span>);
-
-<span style="color:#75715e">//应用示例[5]：连串修改 CH1、CH2 并将所有通道数据以【阻塞】方式发送到虚拟示波器显示
-</span><span style="color:#75715e"></span>xt_scomvofa_xch_put(<span style="color:#ae81ff">2</span>, chx2);                 <span style="color:#75715e">//float chx2[2] = {-100, 100};
-</span><span style="color:#75715e"></span>
-<span style="color:#75715e">//应用示例[6]：连串修改 CH1、CH2 并将所有通道数据以【非阻塞】方式发送到虚拟示波器显示
-</span><span style="color:#75715e"></span>xt_scomvofa_xch_put(<span style="color:#ae81ff">0x80</span><span style="color:#f92672">|</span><span style="color:#ae81ff">2</span>, chx2);            <span style="color:#75715e">//float chx2[2] = {-100, 100};
+crc <span style="color:#f92672">=</span> crc32((<span style="color:#66d9ef">uint8_t</span> <span style="color:#f92672">*</span>)buf, <span style="color:#66d9ef">sizeof</span>(buf)); <span style="color:#75715e">//计算出CRC32结果（其它CRC函数使用方法一样的）
 </span><span style="color:#75715e"></span>
 </code></pre></div>
           </section>
@@ -211,8 +158,8 @@
             XT
         
         
-        <time class="post-date" datetime="2022-12-03T00:00:00Z">
-            3 Dec 2022
+        <time class="post-date" datetime="2023-02-23T00:00:00Z">
+            23 Feb 2023
         </time>
     </footer>
 </article>
@@ -227,7 +174,7 @@
 </main>
 
     <footer class="site-footer clearfix">
-        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2022</section>
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
         
         <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
         

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Posts &middot;  XT 技术联合小组" />
+  	<meta property="og:site_name" content="XT 技术联合小组" />
+  	<meta property="og:url" content="https://o2ospring.github.io/xt/post/" />
+    
+    
+    <meta property="og:type" content="website" />
+    
+
+  <title>
+     Posts &middot;  XT 技术联合小组
+  </title>
+
+    <meta name="description" content="让小组成员拥有团队的技术力量" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://o2ospring.github.io/xt/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://o2ospring.github.io/xt/images/apple-touch-icon.png" />
+    
+    <link rel="stylesheet" type="text/css" href="https://o2ospring.github.io/xt/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="https://o2ospring.github.io/xt/index.xml" rel="alternate" type="application/rss+xml" title="XT 技术联合小组" />
+      
+      
+        <link href="https://o2ospring.github.io/xt/post/index.xml" rel="alternate" type="application/rss+xml" title="Posts &middot; XT 技术联合小组" />
+      
+    
+    <meta name="generator" content="Hugo 0.92.0" />
+
+    <link rel="canonical" href="https://o2ospring.github.io/xt/post/" />
+
+     
+</head>
+<body class="nav-closed">
+<div id="particles-js"></div>
+  
+
+
+ <div class="site-wrapper">
+
+
+
+
+	<header class="main-header" style="background-image: url(https://o2ospring.github.io/xt/images/user.jpg)">
+
+    <nav class="main-nav overlay clearfix">
+      
+        <a class="blog-logo" href="https://o2ospring.github.io/xt/"><img src="https://o2ospring.github.io/xt/images/user.png" alt="Home" /></a>
+      
+      
+        
+          <a class="menu-button icon-feed" href="https://o2ospring.github.io/xt/post/index.xml">&nbsp;&nbsp;Subscribe</a>
+        
+      
+    </nav>
+    <div class="vertical">
+
+        <div class="main-header-content inner">
+            <h1 class="page-title">
+
+              <a class="btn-bootstrap-2" href="#content">XT 技术联合小组</a>
+          </h1>
+        </div>
+</div>
+    <a class="scroll-down icon-arrow-left" href="#content"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    
+    
+    
+    
+
+	<div class="extra-pagination inner">
+    <nav class="pagination" role="navigation">
+
+</nav>
+
+	</div>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221012/">软件平台规划</a></h2>
+    </header>
+    <section class="post-excerpt">
+      <p>
+          <section class="post-content">
+            <h3 id="一通用技术开发平台">一、通用技术开发平台</h3>
+<p>技术小组编写的所有标准模块都是可以跨软硬件平台使用，当这些模块汇总集成时必定需要使用一个通用技术开发平台来作前期测试和后期展示。目前通用技术开发平台的软件选用 RT-thread 实时操作系统，硬件选用 STM32F103 单片机，开发环境为 linux（Ubuntu）桌面系统。关于【编译/调试/构建】等所用到工具都是基于 make（makefile）进行操作（它是所有操作的入口），并且利用多种工具配合组成工具链，完成相关工作！项目仓库网址：<a href="https://github.com/o2ospring/xt_rt-thread">https://github.com/o2ospring/xt_rt-thread</a></p>
+<blockquote>
+<p><strong>【１】工程脚本</strong>：</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">功能</th>
+<th style="text-align:left">工具链</th>
+<th style="text-align:center">完成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">编译</td>
+<td style="text-align:left">make（makefile）→ gcc</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left">烧录</td>
+<td style="text-align:left">make（makefile）→ openocd</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left">调试</td>
+<td style="text-align:left">make（makefile）→ cgdb → gdb → openocd</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left">MDK 工程构建</td>
+<td style="text-align:left">make（makefile）→ lua</td>
+<td style="text-align:center">×</td>
+</tr>
+<tr>
+<td style="text-align:left">MDK 库生成</td>
+<td style="text-align:left">make（makefile）→ CC_ARM???</td>
+<td style="text-align:center">×</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>【２】工程组成</strong>：</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">组成</th>
+<th style="text-align:left">简介</th>
+<th style="text-align:center">完成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/board">board.h</a></td>
+<td style="text-align:left">所有硬件资源管理-头文件</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/applications">application.h</a></td>
+<td style="text-align:left">所有软件资源管理-头文件</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/user">user</a></td>
+<td style="text-align:left">所有用户业务应用-文件夹</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/modules">modules</a></td>
+<td style="text-align:left">所有模块应用汇总-文件夹</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules">xt_modules</a></td>
+<td style="text-align:left">团队标准模块仓库-<strong>子仓库</strong></td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/oss_modules">oss_modules</a></td>
+<td style="text-align:left">开源软件模块仓库-<strong>子仓库</strong></td>
+<td style="text-align:center">√</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>【３】模块添加</strong>：</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">模块</th>
+<th style="text-align:left">简介</th>
+<th style="text-align:center">完成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_macro">xt_comdef.h</a></td>
+<td style="text-align:left">常用的宏定义集合</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_llist">xt_llist</a></td>
+<td style="text-align:left">双向链表服务模块</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_ir_send">xt_ir_send</a></td>
+<td style="text-align:left">红外发送服务模块</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_scom">xt_scom</a></td>
+<td style="text-align:left">串行通信服务模块</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_scom_sds">xt_scom_sds</a></td>
+<td style="text-align:left">串口虚拟示波器：Serial Digital Scope</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_scom_vofa">xt_scom_vofa</a></td>
+<td style="text-align:left">串口虚拟示波器：VOFA+</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_wiznet_vofa">xt_wiznet_vofa</a></td>
+<td style="text-align:left">网络虚拟示波器：VOFA+</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_wiznet">xt_wiznet</a></td>
+<td style="text-align:left">硬件网络栈服务：wizchip</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_cef2">xt_cef2</a></td>
+<td style="text-align:left">无序控制事件服务</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_led_pwm">xt_led_pwm</a></td>
+<td style="text-align:left">单/双色灯调光服务模块</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_led_pwm_mini">xt_led_pwm_mini</a></td>
+<td style="text-align:left">精简版单/双色灯调光服务模块</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left">&mdash;</td>
+<td style="text-align:left">&mdash;</td>
+<td style="text-align:center">&mdash;</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/whik/crc-lib-c">crc-lib-c</a></td>
+<td style="text-align:left">CRC 校验算法</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://gitee.com/liones/encrypt_decrypt">encrypt_decrypt</a></td>
+<td style="text-align:left">MD5、AES、DES 摘要/加密算法</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/lmshao/AES">AES-128</a></td>
+<td style="text-align:left">AES-128 加密算法</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://github.com/talent518/md5">md5</a></td>
+<td style="text-align:left">MD5 摘要算法</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://gitee.com/honrun_he/md5-sha1-sha224-sha256-sha384-sha512">md5-sha1-sha224-sha256-sha384-sha512</a></td>
+<td style="text-align:left">MD5、SHA 摘要算法</td>
+<td style="text-align:center">√</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>补充说明</strong>：目前考虑到小组成员还没有 <a href="https://github.com">github</a> 帐号，所以项目仓库【<a href="https://github.com/o2ospring/xt_rt-thread">xt_rt-thread</a>】暂时以公开方式呈现，当开发平台完成基本雏形后就会改为私有仓库，请小组的同学们尽快注册 <a href="https://github.com">github</a> 账号！</p>
+<p>待续……</p>
+<h3 id="二dali-灯具开发平台">二、DALI 灯具开发平台</h3>
+<p>先开发一些灯光控制模块（如：冷暖双色驱动模块），利用「通用技术开发平台」进行功能测试，之后的「DALI 灯具开发平台」导入「团队标准模块子仓库」就可直接使用相关模块。关于「团队标准模块子仓库」，目的就是为了避免“重复造轮子”，随着日后的不断使用，将 BUG 逐渐暴露出来，通过不断修复，模块就可以变得越来越“完美”。</p>
+<p>待续……</p>
+<h3 id="三knx-系统开发平台">三、KNX 系统开发平台</h3>
+<p>待续……</p>
+
+          </section>
+      </p>
+      
+    </section>
+    <footer class="post-meta">
+        
+            <img class="author-thumb" src="https://o2ospring.github.io/xt/images/user.png" alt="Author image" nopin="nopin" />
+        
+        
+            XT
+        
+        
+        <time class="post-date" datetime="2022-10-12T00:00:00Z">
+            12 Oct 2022
+        </time>
+    </footer>
+</article>
+
+	
+
+	<nav class="pagination" role="navigation">
+
+</nav>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/index.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.min.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.js"></script>  
+
+</body>
+</html>
+

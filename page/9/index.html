@@ -91,48 +91,110 @@
         
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221128/">软件平台使用</a></h2>
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221216/">VOFA&#43; 网络虚拟数字示波器</a></h2>
     </header>
     <section class="post-excerpt">
       <p>
           <section class="post-content">
-            <h3 id="一通用技术开发平台的使用">一、通用技术开发平台的使用</h3>
-<blockquote>
-<p>目前平台使用到的工具有：git、make、cgdb、arm-none-eabi-gdb、arm-none-eabi-gcc、openOCD、libusb 等。关于这些工具的安装及使用，以后再进一步介绍。本章节主要是以最简单的方式介绍开发平台的编译与调试：</p>
-</blockquote>
-<p>1、下载工程：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone --recursive https://github.com/o2ospring/xt_rt-thread.git
-</code></pre></div><p><img src="../img/20221128_1_01_01.jpg" alt="下载工程"></p>
-<p>2、进入工程：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd xt_rt-thread/bsp/stm32/xt_stm32f103/
-</code></pre></div><p><img src="../img/20221128_1_02_01.jpg" alt="进入工程"></p>
-<p>3、清除文件</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make clean
-</code></pre></div><p><img src="../img/20221128_1_03_01.jpg" alt="清除文件"></p>
-<p>4、编译工程：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make all
-</code></pre></div><p><img src="../img/20221128_1_04_01.jpg" alt="编译工程"></p>
-<p><img src="../img/20221128_1_04_02.jpg" alt="编译结果"></p>
-<p>5、烧录固件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make download
-</code></pre></div><p><img src="../img/20221128_1_05_01.jpg" alt="烧录固件"></p>
-<p>6、进入调试：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make debug
-</code></pre></div><p><img src="../img/20221128_1_06_01.jpg" alt="进入调试"></p>
-<p><img src="../img/20221128_1_06_02.jpg" alt="继续进入"></p>
-<p><img src="../img/20221128_1_06_03.jpg" alt="下载固件"></p>
-<p><img src="../img/20221128_1_06_04.jpg" alt="调试操作"></p>
-<p>7、命令总览：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make clean     //清除
-make all       //编译
-make download  //烧录
-make debug     //调试
-</code></pre></div><p>备注：可输入<code>make help</code>查看目前支持的操作命令！</p>
-<h3 id="二dali-灯具开发平台的使用">二、DALI 灯具开发平台的使用</h3>
-<p>待续……</p>
-<h3 id="三knx-系统开发平台的使用">三、KNX 系统开发平台的使用</h3>
-<p>待续……</p>
+            <h3 id="一构架">一、构架</h3>
+<p>1、功能简介<br>
+网络虚拟数字示波器模块为我们将数据通过网络传输到 PC 软件上，并以示波曲线方式显示出来，方便我们对数据的分析，提高调试效率。它提供三种操作接口：修改一路、多路、多路连续通道，并发送所有通道状态。虚拟数字示波器同时具备编写控件向设备发送控制命令！</p>
+<p>2、模块架构<br>
+<img src="../img/20221216_1_01.jpg" alt="模块架构"></p>
+<p>3、环境要求  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">环境</th>
+<th style="text-align:left">要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">软件环境</td>
+<td style="text-align:left">实时操作系统（偏向 RT-Thread）</td>
+</tr>
+<tr>
+<td style="text-align:left">硬件环境</td>
+<td style="text-align:left">STM32F103 及更高性能 MCU</td>
+</tr>
+<tr>
+<td style="text-align:left">依赖环境</td>
+<td style="text-align:left">依赖【xt_wiznet】网络通信服务模块</td>
+</tr>
+</tbody>
+</table>
+<p>4、软件简介<br>
+我们做项目时，往往需要查看数据曲线。例如：查看单片机使用率的曲线、查看 AD 读出温度值的曲线、查看电机转速的曲线…… 那么有没有像示波器一样显示曲线图的工具呢？当然是有的，今天为大家介绍一款虚拟示波器软件 VOFA+（伏特加）。VOFA+ 虚拟示波器是一个电脑软件，它将通过串口、UDP、TCP 传输给电脑的数据以示波曲线方式显示出来，方便我们对数据分析，是您必不可缺的开发助手。VOFA+ 支持 FireWater、JustFloat、RawData 三种数据格式，支持多通道的波形显示，支持 X、Y 轴任意缩放及移动，支持打开与保存波形数据。</p>
+<p>© 本段介绍摘自《一春又一春》博文 ©</p>
+<h3 id="二移植">二、移植</h3>
+<p>1、添加源文件<br>
+将模块源文件、文件包含路径添加到工程，示例：</p>
+<p><img src="../img/20221216_2_01.jpg" alt="添加源文件到工程"></p>
+<p>2、加入初始函数<br>
+在应用初始化函数中加入模块初始化，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rt_init_thread_entry</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>p_arg)
+{
+	.
+	.
+	<span style="color:#75715e">#if (XT_APP_WIZNETVOFA_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_wizvofa_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+	<span style="color:#75715e">#if (XT_APP_WIZNETVOFA_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">#if (XT_WIZVOFA_POWERON_EN != 0)
+</span><span style="color:#75715e"></span>	xt_wizvofa_open();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+}
+</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_MSG_INIT_2_TAB_EXPORT(func,desc)</code>和<code>XT_APP_INIT_2_TAB_EXPORT(func,desc)</code>自动调用函数进行初始化！</p>
+<p>3、包含头文件<br>
+在使用模块的应用程序中加入头文件包含，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#if (XT_APP_WIZNETVOFA_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_wiznet_vofa.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><p>4、配置模块参数<br>
+根据实际的使用环境配置模块参数，示例：</p>
+<p><img src="../img/20221216_2_05.jpg" alt="配置模块参数"></p>
+<p>补充说明：由于标准模块是不允许用户修改的，所以在应用时请启用头文件映射，在映射头文件修改配置！</p>
+<p>5、使能模块开关<br>
+在工程头文件《application.h》统一使能模块开关，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define XT_DEF_DISABLED                 0                               </span><span style="color:#75715e">/* 禁用模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_DEF_ENABLED                  1                               </span><span style="color:#75715e">/* 使能模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define XT_APP_DEBUG                    20221216                        </span><span style="color:#75715e">/* 开启演示                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define __XT_WIZNET_VOFA_REMAP_H
+</span><span style="color:#75715e">#ifndef XT_APP_WIZNETVOFA_EN
+</span><span style="color:#75715e">#define XT_APP_WIZNETVOFA_EN            XT_DEF_ENABLED                  </span><span style="color:#75715e">/* 网络虚拟数字示波器(VOFA+)    */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span><span style="color:#75715e">#define __XT_WIZNET_REMAP_H
+</span><span style="color:#75715e">#define __XT_WIZNET_PORT_REMAP_H
+</span><span style="color:#75715e">#ifndef XT_APP_WIZNET_EN
+</span><span style="color:#75715e">#define XT_APP_WIZNET_EN                XT_DEF_ENABLED                  </span><span style="color:#75715e">/* 网络服务模块                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><p>6、依赖模块说明<br>
+本模块依赖于网络通信服务模块【xt_wiznet】，关于模块移植请参考其说明文档！</p>
+<h3 id="三使用">三、使用</h3>
+<p>1、应用示例<br>
+本示范只是以最简单方式展示模块的基本使用，并非一个应用实例！</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_wiznet_vofa.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//直接在应用中调用函数发送，例如显示 CPU 占有率：
+</span><span style="color:#75715e"></span>xt_wizvofa_1ch_put(<span style="color:#ae81ff">0</span>, (<span style="color:#66d9ef">float</span>)(cpu10000_usage_get(<span style="color:#ae81ff">1</span>)) <span style="color:#f92672">/</span> <span style="color:#ae81ff">100</span>);
 
+<span style="color:#75715e">//应用示例[1]：单独修改 CH1 并由服务线程将所有通道数据发送到虚拟示波器显示
+</span><span style="color:#75715e"></span>xt_wizvofa_1ch_put(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">100</span>);
+
+<span style="color:#75715e">//应用示例[3]：同时修改 CH1、CH3 并由服务线程将所有通道数据发送到虚拟示波器显示
+</span><span style="color:#75715e"></span>xt_wizvofa_4ch_put(<span style="color:#ae81ff">0x01</span><span style="color:#f92672">|</span><span style="color:#ae81ff">0x04</span>, <span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0</span>);
+
+<span style="color:#75715e">//应用示例[5]：连串修改 CH1、CH2 并由服务线程将所有通道数据发送到虚拟示波器显示
+</span><span style="color:#75715e"></span>xt_wizvofa_xch_put(<span style="color:#ae81ff">2</span>, chx2, <span style="color:#ae81ff">0</span>);              <span style="color:#75715e">//float chx2[2] = {-100, 100};
+</span><span style="color:#75715e"></span>
+</code></pre></div>
           </section>
       </p>
       
@@ -145,8 +207,8 @@ make debug     //调试
             XT
         
         
-        <time class="post-date" datetime="2022-11-28T00:00:00Z">
-            28 Nov 2022
+        <time class="post-date" datetime="2022-12-16T00:00:00Z">
+            16 Dec 2022
         </time>
     </footer>
 </article>
@@ -161,7 +223,7 @@ make debug     //调试
 </main>
 
     <footer class="site-footer clearfix">
-        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2022</section>
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
         
         <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
         

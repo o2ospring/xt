@@ -94,20 +94,31 @@
 	   
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221205/">无序控制事件服务</a></h2>
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20230227/">MD5、SHA 摘要算法</a></h2>
     </header>
     <section class="post-excerpt">
       <p>
           <section class="post-content">
-            <h3 id="一构架">一、构架</h3>
+            <h3 id="一说明">一、说明</h3>
 <p>1、功能简介<br>
-对于一些无序控制事件或者是由应用业务掌控的有序事件，我们只需使用简单的标志位来标记它，协助应用程序完成由生产到消费的过程。例如：智能家居系统对接第三方设备，一款卫浴壁挂炉，它只有开关机、设置温度两种操作，这两条控制指令无时序要求，任何时刻发送过去都可受理。处理方法：使用两位标志位标记，高位标志为新控制事件，低位标志为执行事件，通过两个标志位组合可标记出：新事件、执行、完成等多种状态，根据这些状态配合应用程序完成相关控制的过程。</p>
-<p>2、模块架构<br>
-<img src="../img/20221205_1_01.jpg" alt="控制事件处理方法"></p>
-<p>当收到有新控制时：则为<code>XX→1X</code>，调用函数<code>xt_cef2_set_new_flag()</code>；<br>
-应用去查有新控制：则为<code>10→01</code>，实现函数<code>xt_cef2_is_goto_run()</code>返回非 0 时执行控制；<br>
-应用收到控制返回：则为<code>X1→X0</code>，调用函数<code>xt_cef2_set_end_flag()</code>；</p>
-<p>3、环境要求  </p>
+包含 MD5、SHA1、SHA224、SHA256、SHA512 非常适合嵌入式工程使用，单文件，无耦合。</p>
+<p>SHA 系列算法：</p>
+<ul>
+<li>20字节 结果：SHA1；</li>
+<li>32字节 结果：SHA224、SHA256；</li>
+<li>64字节 结果：SHA384、SHA512、SHA512/224、SHA512/256；</li>
+</ul>
+<p>SHA、MD5、AES、DES 摘要/加密算法简介：</p>
+<ul>
+<li>SHA　不可逆过程的摘要算法，结果是【20字节】【32字节】【64字节】，主要用途有：验证消息完整性，安全访问认证，数据签名。</li>
+<li>MD5　不可逆过程的摘要算法，结果是 128位【16字节】，主要用途有：验证消息完整性，安全访问认证，数据签名。</li>
+<li>AES　新一代的对称加密算法，密钥长度可以选择 128位【16字节】，192位【24字节】和 256位【32字节】密钥。</li>
+<li>DES　比较老的对称加密算法，密钥长度是 56位【7字节】。一共有三个参数入口：原文，密钥，加密模式。</li>
+<li>3DES 比较老的对称加密算法，加长了密钥长度，可以为 112位【14字节】 或 168位【21字节】。</li>
+<li>RSA　非对称加密，有公钥和私钥。公钥可公开给公众对数据加密，私钥则是私人对数据解密不能公开。</li>
+</ul>
+<p>资源：<a href="https://gitee.com/honrun_he/md5-sha1-sha224-sha256-sha384-sha512">gitee 仓库</a>、<a href="https://github.com/ARMmbed/mbedtls" title="MbedTLS 前身是 PolarSLL，现已被 ARM 公司收购，是开源加密算法库， 由 C 语言编写的，没有外部依赖，是嵌入式系统最理想加密算法库，支持 Apache 2.0 license 或者 GPL 2.0 license 双重许可，可以自由应用于商业项目中。开源加密算法库还有 OpenSSL、WolfSSL、MesaLink。">mbedtls 库</a></p>
+<p>2、环境要求  </p>
 <table>
 <thead>
 <tr>
@@ -118,73 +129,98 @@
 <tbody>
 <tr>
 <td style="text-align:left">软件环境</td>
-<td style="text-align:left">实时操作系统 或 裸机环境 均可</td>
+<td style="text-align:left">无特别要求</td>
 </tr>
 <tr>
 <td style="text-align:left">硬件环境</td>
-<td style="text-align:left">STM8 及更高性能 MCU</td>
+<td style="text-align:left">有一定要求</td>
+</tr>
+<tr>
+<td style="text-align:left">依赖环境</td>
+<td style="text-align:left">无特别要求</td>
 </tr>
 </tbody>
 </table>
 <h3 id="二移植">二、移植</h3>
 <p>1、添加源文件<br>
 将模块源文件、文件包含路径添加到工程，示例：</p>
-<p><img src="../img/20221205_2_01.jpg" alt="添加源文件到工程"></p>
+<p><img src="../img/20230227_2_01.jpg" alt="添加源文件到工程"></p>
 <p>2、包含头文件<br>
 在使用模块的应用程序中加入头文件包含，示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#if (XT_APP_CEF2_EN == XT_DEF_ENABLED)
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_cef2.h&#34;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#endif
-</span></code></pre></div><p>3、配置模块参数<br>
-根据实际的使用环境配置模块参数，示例：</p>
-<p><img src="../img/20221205_2_05.jpg" alt="配置模块参数"></p>
-<p>补充说明：由于标准模块是不允许用户修改的，所以在应用时请启用头文件映射，在映射头文件修改配置！</p>
-<p>4、使能模块开关<br>
-在工程头文件《application.h》统一使能模块开关，示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define XT_DEF_DISABLED                 0                               </span><span style="color:#75715e">/* 禁用模块                     */</span><span style="color:#75715e">
-</span><span style="color:#75715e">#define XT_DEF_ENABLED                  1                               </span><span style="color:#75715e">/* 使能模块                     */</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-<span style="color:#75715e">#define __XT_CEF2_REMAP_H
-</span><span style="color:#75715e">#ifndef XT_APP_CEF2_EN
-</span><span style="color:#75715e">#define XT_APP_CEF2_EN                  XT_DEF_ENABLED                  </span><span style="color:#75715e">/* 控制事件标志服务模块         */</span><span style="color:#75715e">
-</span><span style="color:#75715e">#endif
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;md5.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;sha1.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;sha256.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;sha512.h&#34;</span><span style="color:#75715e">
 </span></code></pre></div><h3 id="三使用">三、使用</h3>
-<p>1、应用示例<br>
-本示范只是以最简单方式展示模块的基本使用，并非一个应用实例！</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_cef2.h&#34;</span><span style="color:#75715e">
+<p>1、MD5 应用示例</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;md5.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
-  <span style="color:#75715e">//-------------------------------------------
-</span><span style="color:#75715e"></span>  
-  <span style="color:#66d9ef">uint8_t</span> app_cef2[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">0</span>}; <span style="color:#75715e">//事件标志器
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">#define APP_CEF2_ONOFF 0   </span><span style="color:#75715e">//开关机事件
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">#define APP_CEF2_TEMP  1   </span><span style="color:#75715e">//设置温度事件 
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">#define APP_CEF2_SUM   2   </span><span style="color:#75715e">//总数
-</span><span style="color:#75715e"></span>  
-  <span style="color:#75715e">//-------------------------------------------
-</span><span style="color:#75715e"></span>  
-  <span style="color:#75715e">//1、当收到有新控制时：则为`XX→1X`，调用函数
-</span><span style="color:#75715e"></span>  xt_cef2_set_new_flag(app_cef2, <span style="color:#66d9ef">sizeof</span>(app_cef2), APP_CEF2_ONOFF);
-  
-  <span style="color:#75715e">//-------------------------------------------
-</span><span style="color:#75715e"></span>  
-  <span style="color:#75715e">//2、应用去查有新控制：则为`10→01`，实现函数
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> (xt_cef2_is_goto_run(app_cef2, <span style="color:#66d9ef">sizeof</span>(app_cef2), APP_CEF2_ONOFF) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
-  {
-    <span style="color:#75715e">//执行控制……
-</span><span style="color:#75715e"></span>  }
-  
-  <span style="color:#75715e">//-------------------------------------------
-</span><span style="color:#75715e"></span>  
-  <span style="color:#75715e">//3、应用收到控制返回：则为`X1→X0`，调用函数
-</span><span style="color:#75715e"></span>  xt_cef2_set_end_flag(app_cef2, <span style="color:#66d9ef">sizeof</span>(app_cef2), APP_CEF2_ONOFF);
-  
-  <span style="color:#75715e">//3、如果没有收到返回：则为`X1→10`，调用函数
-</span><span style="color:#75715e"></span>  xt_cef2_set_retry_flag(app_cef2, <span style="color:#66d9ef">sizeof</span>(app_cef2), APP_CEF2_ONOFF);
-  
-  <span style="color:#75715e">//-------------------------------------------
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">//……
-</span></code></pre></div>
+<span style="color:#75715e">//int i;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> datsrc[] <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;safkjsdawifkasfhwfkaldfahhfa&#34;</span>}; <span style="color:#75715e">//要运算的数据
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> result[<span style="color:#ae81ff">16</span>]; <span style="color:#75715e">//结果寄存器
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 方式一：
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#ae81ff">0</span> <span style="color:#f92672">!=</span> mbedtls_md5_ret(datsrc, <span style="color:#66d9ef">sizeof</span>(datsrc)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, result))
+{
+	printf(<span style="color:#e6db74">&#34;return error!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#75715e">/*
+</span><span style="color:#75715e">for(i=0; i&lt;16; i++) 
+</span><span style="color:#75715e">{
+</span><span style="color:#75715e">	printf(&#34;%02x&#34;, result[i]);
+</span><span style="color:#75715e">}
+</span><span style="color:#75715e">printf(&#34;\n------------------------\n&#34;);*/</span>
+
+<span style="color:#66d9ef">int32_t</span> res1, res2, res3;
+mbedtls_md5_context ctx;
+
+<span style="color:#75715e">// 方式二：
+</span><span style="color:#75715e"></span>res1 <span style="color:#f92672">=</span> mbedtls_md5_starts_ret(<span style="color:#f92672">&amp;</span>ctx);                           <span style="color:#75715e">//初始化
+</span><span style="color:#75715e"></span>res2 <span style="color:#f92672">=</span> mbedtls_md5_update_ret(<span style="color:#f92672">&amp;</span>ctx, datsrc, <span style="color:#66d9ef">sizeof</span>(datsrc)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>); <span style="color:#75715e">//导入数据（此处可以多次导入多段数据） 【备注：进行初步分组加密】
+</span><span style="color:#75715e"></span>res3 <span style="color:#f92672">=</span> mbedtls_md5_finish_ret(<span style="color:#f92672">&amp;</span>ctx, result);                   <span style="color:#75715e">//计算并输出 16 字节 MD5 到 result[]【备注：进行后序的补足】
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ((res1 <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">||</span> (res2 <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">||</span> (res3 <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>))
+{
+	printf(<span style="color:#e6db74">&#34;return error!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#75715e">/*
+</span><span style="color:#75715e">for(i=0; i&lt;16; i++) 
+</span><span style="color:#75715e">{
+</span><span style="color:#75715e">	printf(&#34;%02x&#34;, result[i]);
+</span><span style="color:#75715e">}
+</span><span style="color:#75715e">printf(&#34;\n------------------------\n&#34;);*/</span>
+</code></pre></div><p>2、SHA 应用示例</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;sha512.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//int i;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> datsrc[] <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;safkjsdawifkasfhwfkaldfahhfa&#34;</span>}; <span style="color:#75715e">//要运算的数据（注:不包括结束符!）
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> result[<span style="color:#ae81ff">64</span>]; <span style="color:#75715e">//结果寄存器
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 方式一：
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#ae81ff">0</span> <span style="color:#f92672">!=</span> mbedtls_sha512_ret(datsrc, <span style="color:#66d9ef">sizeof</span>(datsrc)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, result, <span style="color:#ae81ff">0</span><span style="color:#75715e">/*SHA-512*/</span>))
+{
+	printf(<span style="color:#e6db74">&#34;return error!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#75715e">/*
+</span><span style="color:#75715e">for(i=0; i&lt;64; i++) 
+</span><span style="color:#75715e">{
+</span><span style="color:#75715e">	printf(&#34;%02x&#34;, result[i]);
+</span><span style="color:#75715e">}
+</span><span style="color:#75715e">printf(&#34;\n------------------------\n&#34;);*/</span>
+
+<span style="color:#66d9ef">int32_t</span> res1, res2, res3;
+mbedtls_sha512_context ctx;
+
+<span style="color:#75715e">// 方式二：
+</span><span style="color:#75715e"></span>res1 <span style="color:#f92672">=</span> mbedtls_sha512_starts_ret(<span style="color:#f92672">&amp;</span>ctx, <span style="color:#ae81ff">0</span><span style="color:#75715e">/*SHA-512*/</span>);             <span style="color:#75715e">//初始化
+</span><span style="color:#75715e"></span>res2 <span style="color:#f92672">=</span> mbedtls_sha512_update_ret(<span style="color:#f92672">&amp;</span>ctx, datsrc, <span style="color:#66d9ef">sizeof</span>(datsrc)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>); <span style="color:#75715e">//导入数据（此处可以多次导入多段数据） 【备注：进行初步分组加密】
+</span><span style="color:#75715e"></span>res3 <span style="color:#f92672">=</span> mbedtls_sha512_finish_ret(<span style="color:#f92672">&amp;</span>ctx, result);                   <span style="color:#75715e">//计算并输出 16 字节 MD5 到 result[]【备注：进行后序的补足】
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ((res1 <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">||</span> (res2 <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">||</span> (res3 <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>))
+{
+	printf(<span style="color:#e6db74">&#34;return error!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}<span style="color:#75715e">/*
+</span><span style="color:#75715e">for(i=0; i&lt;64; i++) 
+</span><span style="color:#75715e">{
+</span><span style="color:#75715e">	printf(&#34;%02x&#34;, result[i]);
+</span><span style="color:#75715e">}
+</span><span style="color:#75715e">printf(&#34;\n------------------------\n&#34;);*/</span>
+</code></pre></div>
           </section>
       </p>
       
@@ -197,8 +233,8 @@
             XT
         
         
-        <time class="post-date" datetime="2022-12-05T00:00:00Z">
-            5 Dec 2022
+        <time class="post-date" datetime="2023-02-27T00:00:00Z">
+            27 Feb 2023
         </time>
     </footer>
 </article>
@@ -214,7 +250,7 @@
 
 
     <footer class="site-footer clearfix">
-        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2022</section>
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
         
         <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
         

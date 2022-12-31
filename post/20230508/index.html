@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" 精简版单/双色灯调光服务模块 &middot;  XT 技术联合小组" />
+  	<meta property="og:site_name" content="XT 技术联合小组" />
+  	<meta property="og:url" content="https://o2ospring.github.io/xt/post/20230508/" />
+    
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2023-05-08T00:00:00Z" />
+
+    
+    
+
+  <title>
+     精简版单/双色灯调光服务模块 &middot;  XT 技术联合小组
+  </title>
+
+    <meta name="description" content="让小组成员拥有团队的技术力量" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://o2ospring.github.io/xt/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://o2ospring.github.io/xt/images/apple-touch-icon.png" />
+    
+    <link rel="stylesheet" type="text/css" href="https://o2ospring.github.io/xt/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="https://o2ospring.github.io/xt/index.xml" rel="alternate" type="application/rss+xml" title="XT 技术联合小组" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.92.0" />
+
+    <link rel="canonical" href="https://o2ospring.github.io/xt/post/20230508/" />
+
+     
+</head>
+<body class="nav-closed">
+<div id="particles-js"></div>
+  
+
+
+ <div class="site-wrapper">
+
+
+
+<header class="main-header " style="background-image: url(https://o2ospring.github.io/xt/images/user.jpg)">
+
+    <nav class="main-nav overlay clearfix">
+        
+            <a class="blog-logo" href="https://o2ospring.github.io/xt/"><img src="https://o2ospring.github.io/xt/images/user.png" alt="Blog Logo" /></a>
+        
+        
+    </nav>
+<div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">
+              <a class="btn-bootstrap-2" href="#content">XT 技术联合小组</a>
+          </h1>
+          <h2 class="page-description">让小组成员拥有团队的技术力量</h2>
+        </div>
+</div>
+    <a class="scroll-down icon-arrow-left" href="#content"><span class="hidden">Scroll Down</span></a>
+</header>
+
+  <main id="content" class="content" role="main">
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">精简版单/双色灯调光服务模块</h1>
+        <section class="post-meta">
+        
+	<time class="post-date" datetime="2023-05-08">
+            2023-05-08
+          </time>
+        
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      <h3 id="一构架">一、构架</h3>
+<p>1、功能简介<br>
+精简版单/双色灯调光服务模块只支持直线调光调色，以尽量小的程序空间集成尽量多的核心功能为目的，主要针对 2K ROM 级别的单片机而开发。具体功能包括：可设亮度的直线调光、可设色温的直线调色、可设时间的渐变过程。亮度支持 1%~100% 调节，精度为 0.1%，其中亮度设置为 0xFFFF 或 0 表示开灯或关灯控制。调色支持 2700~6500K 色阶调节，精度为 100K，还支持 0~100% 等级调色，精度为 1%，其中色温设置为 0xFF 表示不改变色温。渐变时间支持 0~100秒 调节，精度为 0.1秒，其中渐变时间设置为 0 表示即时控制目标值，没有渐变过程；而渐变时间设置为 0x7FFF或0xFFFF 表示以默认时间渐变；而渐变时间的 bit15 设置为 1 表示是全程渐变时间，相当于指定渐变速率来调光调色。备注：关于两路 PWM 的错峰控制，由具体硬件驱动来支持。</p>
+<p>2、模块架构<br>
+<img src="../img/20230508_1_01.jpg" alt="模块架构"></p>
+<p>备注：由于调光过程的每步操作在中断中会有一定的运算量，所以<code>xt_led_pwmm_isr_loop()</code>所在中断的优先级要设置较低，避免影响其它中断的实时性！</p>
+<p>3、模块特性<br>
+3.1、<strong>直线渐变调光特性图</strong>：</p>
+<p><img src="../img/20230508_1_03.jpg" alt="直线渐变调光特性图"></p>
+<p>备注：上图包括某色温下开关灯过程，以及几种色温的切换过程。</p>
+<p>3.2、<strong>更多的调光调色知识</strong>：</p>
+<p>说明：更多调光调色知识，请移步《单/双色灯调光服务模块》</p>
+<p>4、模块大小<br>
+<img src="../img/20230508_1_04.jpg" alt="模块大小"></p>
+<p>备注：关闭色温的色阶调节，关闭渐变时间的全程渐变，从而缩减程序大小（最后约 1K 大小）。</p>
+<p>5、环境要求  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">环境</th>
+<th style="text-align:left">要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">软件环境</td>
+<td style="text-align:left">实时操作系统 或 裸机环境 均可</td>
+</tr>
+<tr>
+<td style="text-align:left">硬件环境</td>
+<td style="text-align:left">2K ROM 大小的 MCU</td>
+</tr>
+</tbody>
+</table>
+<h3 id="二移植">二、移植</h3>
+<p>1、添加源文件<br>
+将模块源文件、文件包含路径添加到工程，示例：</p>
+<p><img src="../img/20230508_2_01.jpg" alt="添加源文件到工程"></p>
+<p>2、加入引脚定义<br>
+在工程头文件《board.h》统一加入引脚定义，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// LED调色调光模块(精简版)演示++++++++
+</span><span style="color:#75715e">// 配置PWM频率等
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_TIMX_DIV               1                                                        </span><span style="color:#75715e">//定时器的时钟分频
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_TIMX_PWM_FRE           1000                                                     </span><span style="color:#75715e">//PWM 输出频率
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_TIMX_PWM_FREVOL      ((72000000 / (LEDMM_TIMX_DIV+1) / LEDMM_TIMX_PWM_FRE) - 1) </span><span style="color:#75715e">//PWM 100%数值(≤0xFFFF)
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置PWM定时器
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_TIMX                   TIM3                               </span><span style="color:#75715e">/* 定时器                       */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_TIMX_CLK_ENABLE()    __HAL_RCC_TIM3_CLK_ENABLE()          </span><span style="color:#75715e">/* 定时器时钟使能               //
+</span><span style="color:#75715e">#define LEDMM_TIMX_AFIO_REMAP()    __HAL_AFIO_REMAP_TIM3_PARTIAL_1()    // 定时器引脚重映射(不用则屏蔽) // //只有 TIM1~5 才有映射 (分:重映射[TIM4~5]、部分和完全重映射TIM1~3)
+</span><span style="color:#75715e">#define LEDMM_TIMX_HANDLER           htim3                              // 定时器句柄(不用全局句柄则屏蔽//
+</span><span style="color:#75715e">BSP_EXT TIM_HandleTypeDef            htim3;                             // 定时器句柄(全局变量,按需屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_TIMX_IRQn              TIM3_IRQn                          </span><span style="color:#75715e">/* 定时器中断通道 (不中断则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_TIMX_PRE_INT_PRIO      0                                  </span><span style="color:#75715e">/* 定时器抢占中断优先级(.则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_TIMX_SUB_INT_PRIO      0                                  </span><span style="color:#75715e">/* 定时器响应中断优先级(.则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_TIMX_IRQHandler        TIM3_IRQHandler                    </span><span style="color:#75715e">/* 中断向量函数   (不中断则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置冷光PWM引脚
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMC_CLK_ENABLE()    __HAL_RCC_GPIOB_CLK_ENABLE()         </span><span style="color:#75715e">/* PWMC 管脚时钟使能(不用则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_PWMC_GPIO              GPIOB                              </span><span style="color:#75715e">/* PWMC 所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_PWMC_PIN               GPIO_PIN_0                         </span><span style="color:#75715e">/* PWMC 所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_PWMC_OCMODE            TIM_OCMODE_PWM1                    </span><span style="color:#75715e">/* PWMC 输出极性模式(2则反极性) */</span><span style="color:#75715e"> </span><span style="color:#75715e">//使用在:非0%,非停止
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMC_OCPOLARITY        TIM_OCPOLARITY_HIGH                </span><span style="color:#75715e">/* PWMC 有效占空比输出的电平    // //正向通道
+</span><span style="color:#75715e">#define LEDMM_PWMC_OCIDLESTATE       TIM_OCIDLESTATE_RESET              // PWMC 空闲时电平(不用则屏蔽)  */</span><span style="color:#75715e"> </span><span style="color:#75715e">//只针对TIM1,其它定时器默认为低电平
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMC_CCR               CCR3                               </span><span style="color:#75715e">/* PWMC LEDMM_TIMX-&gt;LEDMM_PWMC_CCR*/</span><span style="color:#75715e"> </span><span style="color:#75715e">//占空比
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMC_TIM_CHANNEL       TIM_CHANNEL_3                      </span><span style="color:#75715e">/* PWMC 所在定时器通道          */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置暖光PWM引脚
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMW_CLK_ENABLE()    __HAL_RCC_GPIOB_CLK_ENABLE()         </span><span style="color:#75715e">/* PWMW 管脚时钟使能(不用则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_PWMW_GPIO              GPIOB                              </span><span style="color:#75715e">/* PWMW 所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_PWMW_PIN               GPIO_PIN_1                         </span><span style="color:#75715e">/* PWMW 所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDMM_PWMW_OCMODE            TIM_OCMODE_PWM2                    </span><span style="color:#75715e">/* PWMW 输出极性模式(2则反极性) */</span><span style="color:#75715e"> </span><span style="color:#75715e">//使用在:非0%,非停止（★★注：使用 TIM_OCMODE_PWM2 是为实现错峰控制★★）
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMW_OCPOLARITY        TIM_OCPOLARITY_HIGH                </span><span style="color:#75715e">/* PWMW 有效占空比输出的电平    // //正向通道
+</span><span style="color:#75715e">#define LEDMM_PWMW_OCIDLESTATE       TIM_OCIDLESTATE_RESET              // PWMW 空闲时电平(不用则屏蔽)  */</span><span style="color:#75715e"> </span><span style="color:#75715e">//只针对TIM1,其它定时器默认为低电平
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMW_CCR               CCR4                               </span><span style="color:#75715e">/* PWMW LEDMM_TIMX-&gt;LEDMM_PWMW_CCR*/</span><span style="color:#75715e"> </span><span style="color:#75715e">//占空比
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDMM_PWMW_TIM_CHANNEL       TIM_CHANNEL_4                      </span><span style="color:#75715e">/* PWMW 所在定时器通道          */</span><span style="color:#75715e">
+</span></code></pre></div><p>3、加入初始函数<br>
+在工程硬件初始化函数中加入模块硬件初始化，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">bsp_board_init</span>(<span style="color:#66d9ef">void</span>)
+{
+	.
+	.
+	<span style="color:#75715e">#if (XT_APP_LEDPWMM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_led_pwmm_chip_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+	<span style="color:#75715e">#if (XT_APP_LEDPWMM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_led_pwmm_dev_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rt_init_thread_entry</span>(<span style="color:#66d9ef">void</span><span style="color:#f92672">*</span> parameter)
+{
+	<span style="color:#75715e">#if (XT_APP_LEDPWMM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_led_pwmm_msg_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+}
+</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_CHIP_INIT_1_TAB_EXPORT(func,desc)</code>、<code>XT_DEV_INIT_2_TAB_EXPORT(func,desc)</code>、<code>XT_MSG_INIT_2_TAB_EXPORT(func,desc)</code>自动调用函数进行初始化！</p>
+<p>4、包含头文件<br>
+在使用模块的应用程序中加入头文件包含，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#if (XT_APP_LEDPWMM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_led_pwm_mini.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><p>5、配置模块参数<br>
+根据实际的使用环境配置模块参数，示例：</p>
+<p><img src="../img/20230508_2_05_01.jpg" alt="配置模块参数"></p>
+<p><img src="../img/20230508_2_05_02.jpg" alt="配置模块参数"></p>
+<p>补充说明：由于标准模块是不允许用户修改的，所以在应用时请启用头文件映射，在映射头文件修改配置！</p>
+<p>6、使能模块开关<br>
+在工程头文件《application.h》统一使能模块开关，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define XT_DEF_DISABLED                 0                               </span><span style="color:#75715e">/* 禁用模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_DEF_ENABLED                  1                               </span><span style="color:#75715e">/* 使能模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define XT_APP_DEBUG                    20230508                        </span><span style="color:#75715e">/* 开启演示                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define __XT_LED_PWM_MINI_REMAP_H
+</span><span style="color:#75715e">#ifndef XT_APP_LEDPWMM_EN
+</span><span style="color:#75715e">#define XT_APP_LEDPWMM_EN               XT_DEF_ENABLED                  </span><span style="color:#75715e">/* LED调色调光模块(精简版)      */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><h3 id="三使用">三、使用</h3>
+<p>1、应用示例<br>
+本示范只是以最简单方式展示模块的基本使用，并非一个应用实例！</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_led_pwm_mini.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//开关灯与调光控制
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">20</span>);          <span style="color:#75715e">//关灯控制　 ，渐变时间为2秒
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">0x7FFF</span>);   <span style="color:#75715e">//开灯控制　 ，渐变速率为默认
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">900</span>, <span style="color:#ae81ff">50</span>);        <span style="color:#75715e">//指定90%亮度，渐变时间为5秒
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//色温切换或指定色温
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">25</span>);   <span style="color:#75715e">//指定为纯暖色，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">50</span>, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">25</span>);  <span style="color:#75715e">//指定为中性色，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">25</span>); <span style="color:#75715e">//指定为纯冷色，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">27</span>, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">25</span>);         <span style="color:#75715e">//指定为纯暖色，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">46</span>, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">25</span>);         <span style="color:#75715e">//指定为中性色，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">65</span>, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">25</span>);         <span style="color:#75715e">//指定为纯冷色，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwmm_cct_set(<span style="color:#ae81ff">36</span>, <span style="color:#ae81ff">800</span>, <span style="color:#ae81ff">1000</span>);        <span style="color:#75715e">//指定3600K色温，指定80%亮度，渐变时间为100秒
+</span><span style="color:#75715e"></span>
+</code></pre></div><p>2、应用实例<br>
+本例为通过读两个旋钮的 AD 值来控制亮度和色温：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_led_pwm_mini.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">void</span>)
+{
+	<span style="color:#66d9ef">uint8_t</span>  c <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, f <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xFF</span>;
+	<span style="color:#66d9ef">uint16_t</span> v, d;
+	<span style="color:#66d9ef">uint16_t</span> c_ad_v <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, b_ad_v <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+	power_init();                  <span style="color:#75715e">//系统初始化
+</span><span style="color:#75715e"></span>	adc_init();                    <span style="color:#75715e">//ADC初始化
+</span><span style="color:#75715e"></span>	xt_led_pwmm_chip_init();       <span style="color:#75715e">//LED内核级初始化函数（应在其它中断初始化前操作）
+</span><span style="color:#75715e"></span>	xt_led_pwmm_dev_init();        <span style="color:#75715e">//LED芯片级初始化函数
+</span><span style="color:#75715e"></span>	xt_led_pwmm_msg_init();        <span style="color:#75715e">//LED应用级初始化函数
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> (v<span style="color:#f92672">=</span><span style="color:#ae81ff">2000</span>; v<span style="color:#f92672">!=</span><span style="color:#ae81ff">0</span>; v<span style="color:#f92672">--</span>) { delay_us(<span style="color:#ae81ff">250</span>); } <span style="color:#75715e">//共0.5秒
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">//c = 0; //////////////////////
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>)
+	{
+		delay_us(<span style="color:#ae81ff">250</span>); delay_us(<span style="color:#ae81ff">250</span>);
+		delay_us(<span style="color:#ae81ff">250</span>); delay_us(<span style="color:#ae81ff">250</span>);
+		<span style="color:#66d9ef">if</span> (c <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">20</span>) <span style="color:#75715e">///////////////
+</span><span style="color:#75715e"></span>		{
+			<span style="color:#66d9ef">if</span> (c <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) { d <span style="color:#f92672">=</span> v <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; }
+			d <span style="color:#f92672">+=</span> get_adc_data(<span style="color:#ae81ff">5</span><span style="color:#75715e">/*AN5*/</span>); <span style="color:#75715e">//色温：10位AD值
+</span><span style="color:#75715e"></span>			v <span style="color:#f92672">+=</span> get_adc_data(<span style="color:#ae81ff">1</span><span style="color:#75715e">/*AN1*/</span>); <span style="color:#75715e">//亮度：10位AD值
+</span><span style="color:#75715e"></span>			c<span style="color:#f92672">++</span>;
+		}
+		<span style="color:#66d9ef">else</span>
+		{
+			d <span style="color:#f92672">/=</span> <span style="color:#ae81ff">20</span>; <span style="color:#75715e">//////////////
+</span><span style="color:#75715e"></span>			v <span style="color:#f92672">/=</span> <span style="color:#ae81ff">20</span>; <span style="color:#75715e">//////////////
+</span><span style="color:#75715e"></span>
+			<span style="color:#75715e">//色温
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//范围：0~1023 ==收窄=&gt; 6~1006 ==平移=&gt; 0~1000
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//刻度：10 = 1000/100
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (d <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1006</span>) { d <span style="color:#f92672">=</span> <span style="color:#ae81ff">1006</span>;  }
+			<span style="color:#66d9ef">if</span> (d <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">6</span>)    { d <span style="color:#f92672">=</span> d <span style="color:#f92672">-</span> <span style="color:#ae81ff">6</span>; }
+			<span style="color:#66d9ef">else</span>          { d <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;     }
+			<span style="color:#66d9ef">if</span> ((c_ad_v <span style="color:#f92672">&gt;</span> d <span style="color:#f92672">?</span> c_ad_v <span style="color:#f92672">-</span> d : d <span style="color:#f92672">-</span> c_ad_v) <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">4</span><span style="color:#75715e">/*色温抖动界限值*/</span>)
+			{
+				c_ad_v <span style="color:#f92672">=</span> d;
+			}
+			c <span style="color:#f92672">=</span> c_ad_v <span style="color:#f92672">/</span> (<span style="color:#66d9ef">uint16_t</span>)(<span style="color:#ae81ff">1000</span><span style="color:#f92672">/</span><span style="color:#ae81ff">100</span>);
+
+			<span style="color:#75715e">//亮度
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//范围：0~1023 ==收窄=&gt; 6~1006 ==平移=&gt; 0~1000
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//节点：0~600~880~1000 &lt;=&gt; 0~60~400~1000
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//差值：600~280~120    &lt;=&gt; 60~340~600
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (v <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1006</span>) { v <span style="color:#f92672">=</span> <span style="color:#ae81ff">1006</span>;  }
+			<span style="color:#66d9ef">if</span> (v <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">6</span>)    { v <span style="color:#f92672">=</span> v <span style="color:#f92672">-</span> <span style="color:#ae81ff">6</span>; }
+			<span style="color:#66d9ef">else</span>          { v <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;     }
+			<span style="color:#66d9ef">if</span> ((b_ad_v <span style="color:#f92672">&gt;</span> v <span style="color:#f92672">?</span> b_ad_v <span style="color:#f92672">-</span> v : v <span style="color:#f92672">-</span> b_ad_v) <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">4</span><span style="color:#75715e">/*亮度抖动界限值*/</span>)
+			{
+				b_ad_v <span style="color:#f92672">=</span> v;
+			}
+			<span style="color:#66d9ef">else</span>
+			{
+				v <span style="color:#f92672">=</span> b_ad_v;
+			}
+			<span style="color:#66d9ef">if</span> (v <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">600</span>)
+			{	<span style="color:#75715e">//调光折线节点：AD值:0~600，档段:0~60，刻度:1
+</span><span style="color:#75715e"></span>				v <span style="color:#f92672">=</span> (<span style="color:#66d9ef">uint16_t</span>)(v) <span style="color:#f92672">/</span> (<span style="color:#66d9ef">uint16_t</span>)((<span style="color:#ae81ff">600</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0</span>)<span style="color:#f92672">/</span>(<span style="color:#ae81ff">60</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0</span>)); <span style="color:#75715e">/*
+</span><span style="color:#75715e">				d = v / 1
+</span><span style="color:#75715e">				v = d * 1 + 0;                            */</span>
+			}
+			<span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (v <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">880</span>)
+			{	<span style="color:#75715e">//调光折线节点：AD值:600~880，档段:60~400，刻度:10
+</span><span style="color:#75715e"></span>				v <span style="color:#f92672">=</span> v <span style="color:#f92672">-</span> <span style="color:#ae81ff">600</span>;
+				v <span style="color:#f92672">=</span> v <span style="color:#f92672">*</span> (<span style="color:#66d9ef">uint16_t</span>)((<span style="color:#ae81ff">400</span><span style="color:#f92672">-</span><span style="color:#ae81ff">60</span>)<span style="color:#f92672">/</span><span style="color:#ae81ff">10</span>) <span style="color:#f92672">/</span> (<span style="color:#66d9ef">uint16_t</span>)((<span style="color:#ae81ff">880</span><span style="color:#f92672">-</span><span style="color:#ae81ff">600</span>)<span style="color:#f92672">/</span><span style="color:#ae81ff">10</span>);
+				d <span style="color:#f92672">=</span> v <span style="color:#f92672">/</span> <span style="color:#ae81ff">10</span>;
+				v <span style="color:#f92672">=</span> d <span style="color:#f92672">*</span> <span style="color:#ae81ff">10</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">60</span>;
+			}
+			<span style="color:#66d9ef">else</span>
+			{	<span style="color:#75715e">//调光折线节点：AD值:880~1000，档段:400~1000，刻度:10
+</span><span style="color:#75715e"></span>				v <span style="color:#f92672">=</span> v <span style="color:#f92672">-</span> <span style="color:#ae81ff">880</span>;
+				v <span style="color:#f92672">=</span> (<span style="color:#66d9ef">uint16_t</span>)(v) <span style="color:#f92672">*</span> (<span style="color:#66d9ef">uint16_t</span>)((<span style="color:#ae81ff">1000</span><span style="color:#f92672">-</span><span style="color:#ae81ff">400</span>)<span style="color:#f92672">/</span>(<span style="color:#ae81ff">1000</span><span style="color:#f92672">-</span><span style="color:#ae81ff">880</span>));
+				d <span style="color:#f92672">=</span> v <span style="color:#f92672">/</span> <span style="color:#ae81ff">10</span>;
+				v <span style="color:#f92672">=</span> d <span style="color:#f92672">*</span> <span style="color:#ae81ff">10</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">400</span>;
+			}
+
+			<span style="color:#75715e">//控制
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> ((f <span style="color:#f92672">&gt;=</span> (<span style="color:#66d9ef">uint8_t</span>)(<span style="color:#ae81ff">1000</span><span style="color:#75715e">/*1秒*/</span><span style="color:#f92672">/</span><span style="color:#ae81ff">20</span><span style="color:#75715e">/*20毫秒*/</span>)) <span style="color:#75715e">//上电锁定1秒后才允许控制
+</span><span style="color:#75715e"></span>			<span style="color:#f92672">&amp;&amp;</span> ((c <span style="color:#f92672">!=</span> xt_led_pwmm_color_temp_get()) <span style="color:#f92672">||</span>     <span style="color:#75715e">//色温/亮度变动才允许控制
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">/**/</span>(v <span style="color:#f92672">!=</span> xt_led_pwmm_brightness_get())))
+			{
+				xt_led_pwmm_cct_set(<span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> c<span style="color:#75715e">/*色温%*/</span>, v<span style="color:#75715e">/*亮度‰*/</span>, f <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0xFF</span> <span style="color:#f92672">?</span> <span style="color:#ae81ff">3</span><span style="color:#75715e">/*0.3秒*/</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">25</span><span style="color:#75715e">/*2.5秒*/</span>);
+			}
+			<span style="color:#66d9ef">if</span> (f <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0xFE</span>) { f<span style="color:#f92672">++</span>; }
+
+			c <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">////////////////
+</span><span style="color:#75715e"></span>		}
+	}
+}
+
+</code></pre></div><p>为调光旋钮能更好调节亮度，分三段折线来调光，如下图：</p>
+<p><img src="../img/20230508_3_02.jpg" alt="调光折线图"></p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+    <figure class="author-image">
+
+        <a class="img" href="https://o2ospring.github.io/xt/" style="background-image: url(https://o2ospring.github.io/xt/images/user.png)"><span class="hidden">XT</span></a>
+    </figure>
+    
+
+    <section class="author">
+
+  <p>XT</p>
+  
+
+</section>
+
+
+    
+
+    
+
+  </footer>
+</article>
+
+</main>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/index.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.min.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.js"></script>  
+
+</body>
+</html>
+
