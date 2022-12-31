@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" 单/双色灯调光服务模块 &middot;  XT 技术联合小组" />
+  	<meta property="og:site_name" content="XT 技术联合小组" />
+  	<meta property="og:url" content="https://o2ospring.github.io/xt/post/20230413/" />
+    
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2023-04-13T00:00:00Z" />
+
+    
+    
+
+  <title>
+     单/双色灯调光服务模块 &middot;  XT 技术联合小组
+  </title>
+
+    <meta name="description" content="让小组成员拥有团队的技术力量" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://o2ospring.github.io/xt/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://o2ospring.github.io/xt/images/apple-touch-icon.png" />
+    
+    <link rel="stylesheet" type="text/css" href="https://o2ospring.github.io/xt/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="https://o2ospring.github.io/xt/index.xml" rel="alternate" type="application/rss+xml" title="XT 技术联合小组" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.92.0" />
+
+    <link rel="canonical" href="https://o2ospring.github.io/xt/post/20230413/" />
+
+     
+</head>
+<body class="nav-closed">
+<div id="particles-js"></div>
+  
+
+
+ <div class="site-wrapper">
+
+
+
+<header class="main-header " style="background-image: url(https://o2ospring.github.io/xt/images/user.jpg)">
+
+    <nav class="main-nav overlay clearfix">
+        
+            <a class="blog-logo" href="https://o2ospring.github.io/xt/"><img src="https://o2ospring.github.io/xt/images/user.png" alt="Blog Logo" /></a>
+        
+        
+    </nav>
+<div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">
+              <a class="btn-bootstrap-2" href="#content">XT 技术联合小组</a>
+          </h1>
+          <h2 class="page-description">让小组成员拥有团队的技术力量</h2>
+        </div>
+</div>
+    <a class="scroll-down icon-arrow-left" href="#content"><span class="hidden">Scroll Down</span></a>
+</header>
+
+  <main id="content" class="content" role="main">
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">单/双色灯调光服务模块</h1>
+        <section class="post-meta">
+        
+	<time class="post-date" datetime="2023-04-13">
+            2023-04-13
+          </time>
+        
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      <h3 id="一构架">一、构架</h3>
+<p>1、功能简介<br>
+单/双色灯调光服务模块是灯光控制系统中一个核心模块，主要为 开关灯、渐变调光、色温切换 三大功能。具体功能包括：指定色温切换、固定色温切换、曲线调光（查表法）、直线调光、手控调光、紧急关断（过流保护）、前置联动调光（交流斩波占空比联动调光）、控制锁定（特殊用途）、掉电参数保存。其中调色（2700~6500K，精度：100K）、调光控制都可以任意设置亮度（1%~100%，精度：0.1%）、渐变时间（0~100秒，精度：0.1秒，包括全程渐变时间【相当于渐变速率】和行程渐变时间，渐变行程可实现 10ms 级别高精度的时间控制），以及 PWM 输出支持错峰控制（由具体硬件驱动来支持，后期还会加入低亮度时使用 PFM 来调光），从而减小对电源冲击。补充：关于某些异常情况需要亮灯（如：发生故障时亮灯）等这类操作或者设置属于应用业务范畴，本服务模块不会增加此类功能支持！</p>
+<p>2、模块架构<br>
+<img src="../img/20230413_1_01.jpg" alt="模块架构"></p>
+<p>备注：由于调光过程的每步操作在中断中都会较大的运算量，所以<code>xt_led_pwm_isr_loop()</code>所在中断的优先级要设置较低，避免影响其它中断的实时性！</p>
+<p>3、模块特性<br>
+3.1、<strong>亮度-电流-PWM 关系图</strong>：</p>
+<blockquote>
+<p>从网上资料及实测得这一结论：亮度、电流、PWM占空比 这三者的两两关系都是接近直线的线性关系。也就是说，控制 PWM 输出的占空比，就是控制亮度的百分比。下面的左图是亮度与电流的关系图，右图是实测出的 PWM 占空比与电流关系图：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_01.jpg" alt="亮度-电流-PWM 关系图"></p>
+<p>3.2、<strong>曲线公式与渐变曲线图</strong>：</p>
+<blockquote>
+<p>调光渐变曲线的目的只是让人眼在调光过程中感觉到舒适和平滑，但它并不是感官或实际亮度的均匀渐变！那为什么要曲线调光？那是因为我们人眼有一个生理特征：对弱光敏感度高，对强光敏感度低。生活中有一现象可以说明这个生理特征，当使用强光照射我们眼睛时，强光影像可以停留十多秒以上；而当弱光照射眼睛时，因为一般亮度的影像在人脑中只会停留几十到几百毫秒左右，所以感觉不出残留。正是这一生理特征会造成在低亮度调光时，我们很容易察觉亮度是梯级性的变化，也就是平常说的亮度“抖动”（注：出现“抖动”现象还与电路性能有关）。也正是这一生理特征，我们观察时发现渐亮容易抖动而渐暗较少抖动的原因。下图是常用的调光曲线和公式，图中的“3”代表曲线的曲度，如果改大则曲线就会越曲，反之曲线越直。本模块参照 DALI 标准将曲线一共分 254 等级（分段），调光时程序会将每一小段再进行细分，使调光曲线具有更高精确度的变化，具体细节可观察下图：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_02.jpg" alt="曲线公式与渐变曲线图"></p>
+<p>3.3、<strong>分段内细分的渐变表现</strong>：</p>
+<blockquote>
+<p>本模块渐变节拍一般定义为 2 毫秒，假如渐变时间为 1 秒，PWM 值由 0 ~ 500 变化，则渐变总节拍数为 500，渐变过程就是每节拍 +1 个 PWM 值。但实际上往往不能整除，PWM 输出值必定要整数，本模块采用的算法：假如 PWM 值由 0 ~ 1234 变化，渐变总节拍数为 500，则 1234(PWM值)÷500(节拍) = 2 …… 234(余数)，那么 1234 = ((2)x(500-234)) + ((2+1)x(234))，即：前段 (500-234) 节拍中每节拍 +2 个 PWM 值，后段 (234) 节拍中每节拍 +3 个 PWM 值。下图是某个渐变动作的曲线图，可看出其中某一分段变化的特性：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_03.jpg" alt="分段内细分的渐变表现"></p>
+<p>3.4、<strong>曲线渐变方式切换色温</strong>：</p>
+<blockquote>
+<p>关于曲线渐变方式切换色温，大多数情况下色温渐变过程明显，让人感觉色温是柔软地过渡，但有一缺点：就是切换过程中亮度会出现“亮-暗-亮”的波动过程，特别是纯冷色和纯暖色相互切换时最为明显。下图中间部分是纯冷色和纯暖色切换曲线图，在曲线交叉点就是切换过程中最暗时刻：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_04.jpg" alt="曲线渐变方式切换色温"></p>
+<p>3.5、<strong>直线渐变方式切换色温</strong>：</p>
+<blockquote>
+<p>关于直线渐变方式切换色温，由于两路直线调光叠加的总亮度变化平稳，加上低亮度渐亮时会有“抖动/突变”的影响，反而造成色温切换过程感觉不明显（感觉一个不留神就完成了切换）。如果切换色温同时设置亮度，那么亮度渐变的效果表现更加生硬（突变明显）。下图中间部分是纯冷色和纯暖色相互切换直线图，可以看出两路叠加总亮度是不变的：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_05.jpg" alt="直线渐变方式切换色温"></p>
+<p>3.6、<strong>冷暖色渐变时间差补偿</strong>：</p>
+<blockquote>
+<p>当调光时选择渐变速率而不是渐变时间，除了纯冷色、纯暖色、纯中性色外，两路色渐变的最终时长必然不一样，在渐变后期更多表现为色温的变化而不是亮度的变化！为了解决这一问题，需要对短的那一路增加渐变时间，使它们以相同的时间完成渐变，从而表现出更好的渐变效果。下面的左图是以相同渐变速率而出现时间差的渐变曲线图，右图则是通过时间差补偿后的渐变曲线图（效果等同相同渐变时间）：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_06.jpg" alt="冷暖色渐变时间差补偿"></p>
+<p>3.7、<strong>LED 手控调光方式选择</strong>：</p>
+<blockquote>
+<p>因为调光目标值须是 ‰（千分比）整数，而渐变曲线是过程值会出现小数，不适合用来进行步进式的调光。所以本模块提供两种的手控调光方式选择：手控直线调光和手控类曲线调光。其中手控类曲线调光效果会更好一些，它对低亮度有着较高的精确度调节。下图是手控直线调光和手控类曲线调光的对比图：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_07.jpg" alt="LED 手控调光方式"></p>
+<p>3.8、<strong>PWM 最小值限制选择</strong>：</p>
+<blockquote>
+<p>由于电路和人眼特性的影响，大多数情况下在低亮度渐变或多或少有抖动现象，本模块提供可以设置跳过最低亮度渐变的驱动选择（在驱动层实现），在一定程度上减少低亮度抖动现象。下图是没加 PWM 最小值限制和增加 PWM 最小值限制的对比图：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_08.jpg" alt="PWM 最小值限制"></p>
+<p>3.9、<strong>PWM 输出的错峰控制</strong>：</p>
+<blockquote>
+<p>两路色温总是会有一部分高电平重叠时间，在这重叠的时间里，对供电电源来说，相当于两路 100%输出，会对供电电源有较大的冲击，可能会影响供电电源的使用寿命。解决方法很简单，只需把高电平输出错开即可，具体做法：将其中一路 PWM 电平取反，再用 PWM最大值 - PWM输出值（在驱动层实现）。下图是两路 PWM 常规输出与错峰输出的对比图：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_09.jpg" alt="常规输出 VS 错峰输出"></p>
+<p>3.10、<strong>PWM-PFM 两种调制</strong>：</p>
+<blockquote>
+<p>PWM（脉冲宽度调制）和 PFM（脉冲频率调制/定宽调频）是两大类的输出量转换器架构，常用于灯光控制、电机控制、开关电源。备注：还有 PSM（脉冲跨周期调制），方式：频率和脉宽都不变，脉冲时有时无的方式进行调制。PWM 在中等和重负载时效率高，但在轻负载时效率低；而 PFM 在轻负载的情况下效率则是很高。关于 PWM 频率的影响：1）频率低录像会频闪和电源元件会啸叫；2）低亮度时频率高难过 EMC 传导；3）目前市面上大多数调光频率都是 10~16KHz 居多。下图是 PWM 与 PFM 的对比图：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_10.jpg" alt="PWM VS PFM"></p>
+<p>3.11、<strong>LED 恒压与恒流驱动</strong>：</p>
+<blockquote>
+<p>LED 驱动方案一般分为两种：恒压驱动和恒流驱动。恒压驱动：输出的电压是固定的，而输出的电流却随着负载的增减而变化。恒流驱动：输出的电流是恒定的，而输出的电压却随着负载阻值的大小不同在一定范围内变化。当使用 PWM 来控制这两种驱动输出低亮度时，都会有抖动现象（与人眼生理特征也有关）：PWM 直驱 MOS管（恒压驱动）出现的抖动基本是 PWM 的分辩率太低引起；而 PWM 转恒流的芯片本身在低亮时的线性较差，容易出现抖动。LED 驱动芯片有：DIO8280、FP7183、Hi7001 等。下图是恒压驱动和恒流驱动常见电路：</p>
+</blockquote>
+<p><img src="../img/20230413_1_03_11.jpg" alt="恒压 VS 恒流"></p>
+<p>4、DALI标准<br>
+4.1、<strong>DALI 调光对数曲线</strong>：</p>
+<p><img src="../img/20230413_1_04_01.jpg" alt="DALI 调光对数曲线"></p>
+<p>4.2、<strong>DALI 常规参数配置</strong>：</p>
+<p><img src="../img/20230413_1_04_02.jpg" alt="DALI 常规参数配置"></p>
+<p>更多配置：<a href="../img/20230413_1_04_03.jpg">参数配置</a>、<a href="../img/20230413_1_04_04.jpg">色温配置</a></p>
+<p>5、环境要求  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">环境</th>
+<th style="text-align:left">要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">软件环境</td>
+<td style="text-align:left">实时操作系统 或 裸机环境 均可</td>
+</tr>
+<tr>
+<td style="text-align:left">硬件环境</td>
+<td style="text-align:left">增强型 C51 及更高性能 MCU</td>
+</tr>
+</tbody>
+</table>
+<h3 id="二移植">二、移植</h3>
+<p>1、添加源文件<br>
+将模块源文件、文件包含路径添加到工程，示例：</p>
+<p><img src="../img/20230413_2_01.jpg" alt="添加源文件到工程"></p>
+<p>2、加入引脚定义<br>
+在工程头文件《board.h》统一加入引脚定义，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// LED调色调光模块演示++++++++++++++++
+</span><span style="color:#75715e">// 配置PWM频率等
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_TIMX_DIV                1                                                      </span><span style="color:#75715e">//定时器的时钟分频
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_TIMX_PWM_FRE            1000                                                   </span><span style="color:#75715e">//PWM 输出频率
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_TIMX_PWM_FREVOL       ((72000000 / (LEDM_TIMX_DIV+1) / LEDM_TIMX_PWM_FRE) - 1) </span><span style="color:#75715e">//PWM 100%数值(≤0xFFFF)
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置PWM定时器
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_TIMX                    TIM3                               </span><span style="color:#75715e">/* 定时器                       */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_TIMX_CLK_ENABLE()     __HAL_RCC_TIM3_CLK_ENABLE()          </span><span style="color:#75715e">/* 定时器时钟使能               //
+</span><span style="color:#75715e">#define LEDM_TIMX_AFIO_REMAP()     __HAL_AFIO_REMAP_TIM3_PARTIAL_1()    // 定时器引脚重映射(不用则屏蔽) // //只有 TIM1~5 才有映射 (分:重映射[TIM4~5]、部分和完全重映射TIM1~3)
+</span><span style="color:#75715e">#define LEDM_TIMX_HANDLER            htim3                              // 定时器句柄(不用全局句柄则屏蔽//
+</span><span style="color:#75715e">BSP_EXT TIM_HandleTypeDef            htim3;                             // 定时器句柄(全局变量,按需屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_TIMX_IRQn               TIM3_IRQn                          </span><span style="color:#75715e">/* 定时器中断通道               */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_TIMX_PRE_INT_PRIO       0                                  </span><span style="color:#75715e">/* 定时器抢占中断优先级         */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_TIMX_SUB_INT_PRIO       0                                  </span><span style="color:#75715e">/* 定时器响应中断优先级         */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_TIMX_IRQHandler         TIM3_IRQHandler                    </span><span style="color:#75715e">/* 中断向量函数                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置冷光PWM引脚
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMC_CLK_ENABLE()     __HAL_RCC_GPIOB_CLK_ENABLE()         </span><span style="color:#75715e">/* PWMC 管脚时钟使能(不用则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_PWMC_GPIO               GPIOB                              </span><span style="color:#75715e">/* PWMC 所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_PWMC_PIN                GPIO_PIN_0                         </span><span style="color:#75715e">/* PWMC 所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_PWMC_OCMODE             TIM_OCMODE_PWM1                    </span><span style="color:#75715e">/* PWMC 输出极性模式(2则反极性) */</span><span style="color:#75715e"> </span><span style="color:#75715e">//使用在:非0%,非停止
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMC_OCPOLARITY         TIM_OCPOLARITY_HIGH                </span><span style="color:#75715e">/* PWMC 有效占空比输出的电平    // //正向通道
+</span><span style="color:#75715e">#define LEDM_PWMC_OCIDLESTATE        TIM_OCIDLESTATE_RESET              // PWMC 空闲时电平(不用则屏蔽)  */</span><span style="color:#75715e"> </span><span style="color:#75715e">//只针对TIM1,其它定时器默认为低电平
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMC_CCR                CCR3                               </span><span style="color:#75715e">/* PWMC LEDM_TIMX-&gt;LEDM_PWMC_CCR*/</span><span style="color:#75715e"> </span><span style="color:#75715e">//占空比
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMC_TIM_CHANNEL        TIM_CHANNEL_3                      </span><span style="color:#75715e">/* PWMC 所在定时器通道          */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置暖光PWM引脚
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMW_CLK_ENABLE()     __HAL_RCC_GPIOB_CLK_ENABLE()         </span><span style="color:#75715e">/* PWMW 管脚时钟使能(不用则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_PWMW_GPIO               GPIOB                              </span><span style="color:#75715e">/* PWMW 所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_PWMW_PIN                GPIO_PIN_1                         </span><span style="color:#75715e">/* PWMW 所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define LEDM_PWMW_OCMODE             TIM_OCMODE_PWM2                    </span><span style="color:#75715e">/* PWMW 输出极性模式(2则反极性) */</span><span style="color:#75715e"> </span><span style="color:#75715e">//使用在:非0%,非停止（★★注：使用 TIM_OCMODE_PWM2 是为实现错峰控制★★）
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMW_OCPOLARITY         TIM_OCPOLARITY_HIGH                </span><span style="color:#75715e">/* PWMW 有效占空比输出的电平    // //正向通道
+</span><span style="color:#75715e">#define LEDM_PWMW_OCIDLESTATE        TIM_OCIDLESTATE_RESET              // PWMW 空闲时电平(不用则屏蔽)  */</span><span style="color:#75715e"> </span><span style="color:#75715e">//只针对TIM1,其它定时器默认为低电平
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMW_CCR                CCR4                               </span><span style="color:#75715e">/* PWMW LEDM_TIMX-&gt;LEDM_PWMW_CCR*/</span><span style="color:#75715e"> </span><span style="color:#75715e">//占空比
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define LEDM_PWMW_TIM_CHANNEL        TIM_CHANNEL_4                      </span><span style="color:#75715e">/* PWMW 所在定时器通道          */</span><span style="color:#75715e">
+</span></code></pre></div><p>3、加入初始函数<br>
+在工程硬件初始化函数中加入模块硬件初始化，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">bsp_board_init</span>(<span style="color:#66d9ef">void</span>)
+{
+	.
+	.
+	<span style="color:#75715e">#if (XT_APP_LEDPWM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_led_pwm_chip_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+	<span style="color:#75715e">#if (XT_APP_LEDPWM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_led_pwm_dev_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rt_init_thread_entry</span>(<span style="color:#66d9ef">void</span><span style="color:#f92672">*</span> parameter)
+{
+	<span style="color:#75715e">#if (XT_APP_LEDPWM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_led_pwm_msg_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+}
+</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_CHIP_INIT_1_TAB_EXPORT(func,desc)</code>、<code>XT_DEV_INIT_2_TAB_EXPORT(func,desc)</code>、<code>XT_MSG_INIT_2_TAB_EXPORT(func,desc)</code>自动调用函数进行初始化！</p>
+<p>4、包含头文件<br>
+在使用模块的应用程序中加入头文件包含，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#if (XT_APP_LEDPWM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_led_pwm.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><p>5、配置模块参数<br>
+根据实际的使用环境配置模块参数，示例：</p>
+<p><img src="../img/20230413_2_05_01.jpg" alt="配置模块参数"></p>
+<p><img src="../img/20230413_2_05_02.jpg" alt="配置模块参数"></p>
+<p><img src="../img/20230413_2_05_03.jpg" alt="配置模块参数"></p>
+<p><img src="../img/20230413_2_05_04.jpg" alt="配置模块参数"></p>
+<p><img src="../img/20230413_2_05_05.jpg" alt="配置模块参数"></p>
+<p>补充说明：由于标准模块是不允许用户修改的，所以在应用时请启用头文件映射，在映射头文件修改配置！</p>
+<p>6、使能模块开关<br>
+在工程头文件《application.h》统一使能模块开关，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define XT_DEF_DISABLED                 0                               </span><span style="color:#75715e">/* 禁用模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_DEF_ENABLED                  1                               </span><span style="color:#75715e">/* 使能模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define XT_APP_DEBUG                    20230301                        </span><span style="color:#75715e">/* 开启演示                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define __XT_LED_PWM_REMAP_H
+</span><span style="color:#75715e">#ifndef XT_APP_LEDPWM_EN
+</span><span style="color:#75715e">#define XT_APP_LEDPWM_EN                XT_DEF_ENABLED                  </span><span style="color:#75715e">/* LED调色调光模块              */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><h3 id="三使用">三、使用</h3>
+<p>1、应用示例<br>
+本示范只是以最简单方式展示模块的基本使用，并非一个应用实例！</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_led_pwm.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//开关灯与调光控制
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_SW, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">20</span>);         <span style="color:#75715e">//关灯控制　 ，渐变时间为2秒
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_SW, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0xFFFF</span>);     <span style="color:#75715e">//开灯控制　 ，渐变速率为默认
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_SW, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0x7FFF</span>);     <span style="color:#75715e">//开关灯控制 ，渐变时间为默认
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_LIGHT, <span style="color:#ae81ff">900</span>, <span style="color:#ae81ff">50</span>);    <span style="color:#75715e">//指定90%亮度，渐变时间为5秒
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//模拟按键上下调光
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_ADJUST, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0x7FFF</span>); <span style="color:#75715e">//按键按下时向上调光，渐变时间为默认
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_ADJUST, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x7FFF</span>); <span style="color:#75715e">//按键松开时结束调光
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_ADJUST, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0x7FFF</span>); <span style="color:#75715e">//按键按下时向下调光，渐变时间为默认
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_ADJUST, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x7FFF</span>); <span style="color:#75715e">//按键松开时结束调光
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//色温切换或指定色温
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_MODE_SW, <span style="color:#ae81ff">0x7F</span>, <span style="color:#ae81ff">25</span>); <span style="color:#75715e">//正常切换色温，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_MODE_SW, <span style="color:#ae81ff">0xFF</span>, <span style="color:#ae81ff">25</span>); <span style="color:#75715e">//强制切换色温，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_MODE_SW, XT_LEDM_MODE_COLD, <span style="color:#ae81ff">25</span>);  <span style="color:#75715e">//指定为纯冷色，渐变时间为2.5秒
+</span><span style="color:#75715e"></span>xt_led_pwm_cct_set(<span style="color:#ae81ff">36</span>, <span style="color:#ae81ff">800</span>, <span style="color:#ae81ff">1000</span>);            <span style="color:#75715e">//指定3600K色温，指定80%亮度，渐变时间为100秒
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//模拟中断检测到输出过流时
+</span><span style="color:#75715e"></span>xt_led_pwm_alarm_locked();                    <span style="color:#75715e">//过流保护，可以在中断里调用
+</span><span style="color:#75715e"></span>xt_led_pwm_alarm_unlock();                    <span style="color:#75715e">//过流保护复位，须由应用调用
+</span><span style="color:#75715e"></span>xt_led_pwm_set(XT_LEDM_OP_SW, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0x7FFF</span>);     <span style="color:#75715e">//重新开灯控制，须由应用调用
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//模拟中断检测到掉电时
+</span><span style="color:#75715e"></span>xt_led_pwm_st_save_trigger();                 <span style="color:#75715e">//通知调光模块赶紧进行掉电保存数据，在中断里触发
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//模拟交流斩波占空比联动调光
+</span><span style="color:#75715e"></span>xt_led_pwm_pre_dimmer(v);                     <span style="color:#75715e">//根据斩波占空比v%大小直接联动调光模块进行调光，可以在中断里控制
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//切换调光曲线表
+</span><span style="color:#75715e"></span>xt_led_pwm_curve_tb_replace(p_tab2);          <span style="color:#75715e">//切换调光曲线表为p_tab2[]，注意曲线固定大小为p_tab2[255]
+</span><span style="color:#75715e"></span>
+</code></pre></div>
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+    <figure class="author-image">
+
+        <a class="img" href="https://o2ospring.github.io/xt/" style="background-image: url(https://o2ospring.github.io/xt/images/user.png)"><span class="hidden">XT</span></a>
+    </figure>
+    
+
+    <section class="author">
+
+  <p>XT</p>
+  
+
+</section>
+
+
+    
+
+    
+
+  </footer>
+</article>
+
+</main>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/index.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.min.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.js"></script>  
+
+</body>
+</html>
+

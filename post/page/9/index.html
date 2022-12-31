@@ -94,169 +94,267 @@
 	   
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221012/">软件平台规划</a></h2>
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221210/">WIZnet 网络服务模块（硬件网络栈）</a></h2>
     </header>
     <section class="post-excerpt">
       <p>
           <section class="post-content">
-            <h3 id="一通用技术开发平台">一、通用技术开发平台</h3>
-<p>技术小组编写的所有标准模块都是可以跨软硬件平台使用，当这些模块汇总集成时必定需要使用一个通用技术开发平台来作前期测试和后期展示。目前通用技术开发平台的软件选用 RT-thread 实时操作系统，硬件选用 STM32F103 单片机，开发环境为 linux（Ubuntu）桌面系统。关于【编译/调试/构建】等所用到工具都是基于 make（makefile）进行操作（它是所有操作的入口），并且利用多种工具配合组成工具链，完成相关工作！项目仓库网址：<a href="https://github.com/o2ospring/xt_rt-thread">https://github.com/o2ospring/xt_rt-thread</a></p>
-<blockquote>
-<p><strong>【１】工程脚本</strong>：</p>
-</blockquote>
+            <h3 id="一构架">一、构架</h3>
+<p>1、功能简介</p>
+<ul>
+<li>WIZnet 为我们提供全硬件 TCP/IP 嵌入式以太网控制器，为嵌入式系统提供了更加简易的互联网连接方案。其集成了 TCP/IP 协议栈，10/100M 以太网数据链路层(MAC)及物理层(PHY)，使得用户使用单芯片就能够在他们的应用中拓展网络连接。用户可以同时使用 4 或 8 个硬件 Socket 独立通讯。提供 SPI 接口,从而能够更加容易与主控 MCU 整合。使用高效 SPI 协议支持 80MHz 速率，从而能够更好的实现高速网络通讯。<br>
+主要特点：</li>
+</ul>
+<ol>
+<li>支持硬件 TCP/IP 协议：TCP, UDP, ICMP, IPv4, ARP, IGMP, PPPoE</li>
+<li>支持 4 或 8 个独立端口（Socket）同时通讯</li>
+<li>支持掉电模式</li>
+<li>支持网络唤醒</li>
+<li>支持高速串行外设接口（SPI 模式 0，3）</li>
+<li>内部 8K 或 32K 字节收发缓存</li>
+<li>内嵌 10BaseT/100BaseTX 以太网物理层（PHY）</li>
+<li>支持自动协商（10/100-Based 全双工/半双工）</li>
+<li>不支持 IP 分片</li>
+<li>3.3V 工作电压，I/O 信号口 5V 耐压；</li>
+<li>LED 状态显示（全双工/半双工，网络连接，网络速度，活动状态）；</li>
+</ol>
+<p>2、模块架构<br>
+<img src="../img/20221210_1_01.jpg" alt="模块架构"></p>
+<p>3、环境要求  </p>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">功能</th>
-<th style="text-align:left">工具链</th>
-<th style="text-align:center">完成</th>
+<th style="text-align:left">环境</th>
+<th style="text-align:left">要求</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">编译</td>
-<td style="text-align:left">make（makefile）→ gcc</td>
-<td style="text-align:center">√</td>
+<td style="text-align:left">软件环境</td>
+<td style="text-align:left">实时操作系统</td>
 </tr>
 <tr>
-<td style="text-align:left">烧录</td>
-<td style="text-align:left">make（makefile）→ openocd</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left">调试</td>
-<td style="text-align:left">make（makefile）→ cgdb → gdb → openocd</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left">MDK 工程构建</td>
-<td style="text-align:left">make（makefile）→ lua</td>
-<td style="text-align:center">×</td>
-</tr>
-<tr>
-<td style="text-align:left">MDK 库生成</td>
-<td style="text-align:left">make（makefile）→ CC_ARM???</td>
-<td style="text-align:center">×</td>
+<td style="text-align:left">硬件环境</td>
+<td style="text-align:left">STM32F103 及更高性能 MCU</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>【２】工程组成</strong>：</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">组成</th>
-<th style="text-align:left">简介</th>
-<th style="text-align:center">完成</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/board">board.h</a></td>
-<td style="text-align:left">所有硬件资源管理-头文件</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/applications">application.h</a></td>
-<td style="text-align:left">所有软件资源管理-头文件</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/user">user</a></td>
-<td style="text-align:left">所有用户业务应用-文件夹</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_rt-thread/tree/master/bsp/stm32/xt_stm32f103/modules">modules</a></td>
-<td style="text-align:left">所有模块应用汇总-文件夹</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules">xt_modules</a></td>
-<td style="text-align:left">团队标准模块仓库-<strong>子仓库</strong></td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/oss_modules">oss_modules</a></td>
-<td style="text-align:left">开源软件模块仓库-<strong>子仓库</strong></td>
-<td style="text-align:center">×</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>【３】模块添加</strong>：</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">模块</th>
-<th style="text-align:left">简介</th>
-<th style="text-align:center">完成</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_macro">xt_comdef.h</a></td>
-<td style="text-align:left">常用的宏定义集合</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_macro">xt_llist.h</a></td>
-<td style="text-align:left">双向链表服务模块</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_ir_send">xt_ir_send</a></td>
-<td style="text-align:left">红外发送服务模块</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_scom">xt_scom</a></td>
-<td style="text-align:left">串行通信服务模块</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_scom_sds">xt_scom_sds</a></td>
-<td style="text-align:left">串口虚拟示波器：Serial Digital Scope</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_scom_vofa">xt_scom_vofa</a></td>
-<td style="text-align:left">串口虚拟示波器：VOFA+</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_wiznet_vofa">xt_wiznet_vofa</a></td>
-<td style="text-align:left">网络虚拟示波器：VOFA+</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_wiznet">xt_wiznet</a></td>
-<td style="text-align:left">硬件网络栈服务：wizchip</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/o2ospring/xt_modules/tree/master/xt_event_f2">xt_cef2</a></td>
-<td style="text-align:left">无序控制事件服务</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:left">xt_xxxx</td>
-<td style="text-align:left">xxxxxx</td>
-<td style="text-align:center">×</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<p><strong>补充说明</strong>：目前考虑到小组成员还没有 <a href="https://github.com">github</a> 帐号，所以项目仓库【<a href="https://github.com/o2ospring/xt_rt-thread">xt_rt-thread</a>】暂时以公开方式呈现，当开发平台完成基本雏形后就会改为私有仓库，请小组的同学们尽快注册 <a href="https://github.com">github</a> 账号！</p>
-<p>待续……</p>
-<h3 id="二dali-灯具开发平台">二、DALI 灯具开发平台</h3>
-<p>先开发一些灯光控制模块（如：冷暖双色驱动模块），利用「通用技术开发平台」进行功能测试，之后的「DALI 灯具开发平台」导入「团队标准模块子仓库」就可直接使用相关模块。关于「团队标准模块子仓库」，目的就是为了避免“重复造轮子”，随着日后的不断使用，将 BUG 逐渐暴露出来，通过不断修复，模块就可以变得越来越“完美”。</p>
-<p>待续……</p>
-<h3 id="三knx-系统开发平台">三、KNX 系统开发平台</h3>
-<p>待续……</p>
-
+<p>4、厂家代码<br>
+关于厂家代码，由于《socket.c》套接字操作大量使用了<code>whil()</code>死循环，不适合系统操作，所以对《socket.c》和《dhcp.c》修改并增加适配操作系统代码！</p>
+<h3 id="二移植">二、移植</h3>
+<p>1、添加源文件<br>
+将模块源文件、文件包含路径添加到工程，示例：</p>
+<p><img src="../img/20221210_2_01.jpg" alt="添加源文件到工程"></p>
+<p>2、加入引脚定义<br>
+在工程头文件《board.h》统一加入引脚定义，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// 网络服务模块+++++++++++++++++++++++
+</span><span style="color:#75715e">// WIZnet网络芯片SPI总线控制延时
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_WIZ_SPI_NSS_EN_HOLD_TM()                                     </span><span style="color:#75715e">/* NSS 使能时保持时间(可不延时) */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_NSS_DI_HOLD_TM()  bsp_delay0us125(2)                 </span><span style="color:#75715e">/* NSS 禁止时保持时间(延时50nS) */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// WIZnet网络芯片控制管脚的定义
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_WIZ_SPI                   SPI2                               </span><span style="color:#75715e">/* 使用的哪个SPI                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_BAUD_RATE         SPI_BAUDRATEPRESCALER_4            </span><span style="color:#75715e">/* 速度(分频): 72/4=18Mbit/S    */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_CLK_ENABLE()    __HAL_RCC_SPI2_CLK_ENABLE()          </span><span style="color:#75715e">/* 串口时钟使能                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_CMS_CLK_EN()    __HAL_RCC_GPIOB_CLK_ENABLE()         </span><span style="color:#75715e">/* SCK-MOSI-MISO 脚时钟使能     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_NSS_CLK_EN()    __HAL_RCC_GPIOB_CLK_ENABLE()         </span><span style="color:#75715e">/* NSS  脚时钟使能              */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_NSS_GPIO          GPIOB                              </span><span style="color:#75715e">/* NSS  所在端口(NSS由软件控制) */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_NSS_PIN           GPIO_PIN_12                        </span><span style="color:#75715e">/* NSS  所在管脚(NSS由软件控制) */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_SCK_GPIO          GPIOB                              </span><span style="color:#75715e">/* SCK  所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_SCK_PIN           GPIO_PIN_13                        </span><span style="color:#75715e">/* SCK  所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_MISO_GPIO         GPIOB                              </span><span style="color:#75715e">/* MISO 所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_MISO_PIN          GPIO_PIN_14                        </span><span style="color:#75715e">/* MISO 所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_MOSI_GPIO         GPIOB                              </span><span style="color:#75715e">/* MOSI 所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_MOSI_PIN          GPIO_PIN_15                        </span><span style="color:#75715e">/* MOSI 所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_RX_IN_MODE        GPIO_NOPULL                        </span><span style="color:#75715e">/* MISO 输入模式(下拉/上拉/悬空)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_DIRECTION_LINES   SPI_DIRECTION_2LINES               </span><span style="color:#75715e">/* 收发使用几线(全双工/半双工)  //
+</span><span style="color:#75715e">#define XT_WIZ_SPI_AFIO_REMAP()    __HAL_AFIO_REMAP_SPI1_ENABLE()       // SPI  引脚重映射(不使用则屏蔽)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_SPI_HANDLER           xt_wiz_hspi                        </span><span style="color:#75715e">/* SPI  句柄                    */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_RST_CLK_ENABLE()    __HAL_RCC_GPIOA_CLK_ENABLE()         </span><span style="color:#75715e">/* RST  所在外设(使能外设时钟)  */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_RST_GPIO              GPIOA                              </span><span style="color:#75715e">/* RST  所在端口                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_RST_PIN               GPIO_PIN_1                         </span><span style="color:#75715e">/* RST  所在管脚                */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_WIZ_RST_EN()              XT_WIZ_RST_GPIO-&gt;BRR      = XT_WIZ_RST_PIN     </span><span style="color:#75715e">// RST有效
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_WIZ_RST_DI()              XT_WIZ_RST_GPIO-&gt;BSRR     = XT_WIZ_RST_PIN     </span><span style="color:#75715e">// RST无效
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_WIZ_SPI_NSS_EN()          XT_WIZ_SPI_NSS_GPIO-&gt;BRR  = XT_WIZ_SPI_NSS_PIN </span><span style="color:#75715e">// NSS有效
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_WIZ_SPI_NSS_DI()          XT_WIZ_SPI_NSS_GPIO-&gt;BSRR = XT_WIZ_SPI_NSS_PIN </span><span style="color:#75715e">// NSS无效
+</span></code></pre></div><p>3、加入初始函数<br>
+在应用初始化函数中加入模块初始化，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">bsp_board_init</span>(<span style="color:#66d9ef">void</span>)
+{
+	.
+	.
+	<span style="color:#75715e">#if (XT_APP_WIZNET_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_net_pin_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+	<span style="color:#75715e">#if (XT_APP_WIZNET_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_net_cfg_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+}
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rt_init_thread_entry</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>p_arg)
+{
+	.
+	.
+	<span style="color:#75715e">#if (XT_APP_WIZNET_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_net_ipc_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+	<span style="color:#75715e">#if (XT_APP_WIZNET_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_net_thread_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+}
+</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_HARD_INIT_2_TAB_EXPORT(func,desc)</code>、<code>XT_DEV_INIT_2_TAB_EXPORT(func,desc)</code>、<code>XT_MSG_INIT_2_TAB_EXPORT(func,desc)</code>、<code>XT_APP_INIT_2_TAB_EXPORT(func,desc)</code>自动调用函数进行初始化！</p>
+<p>4、包含头文件<br>
+在使用模块的应用程序中加入头文件包含，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#if (XT_APP_WIZNET_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_wiznet.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><p>5、配置模块参数<br>
+根据实际的使用环境配置模块参数，示例：</p>
+<p><img src="../img/20221210_2_04.jpg" alt="配置模块参数"><br>
+<img src="../img/20221210_2_05.jpg" alt="配置模块参数"></p>
+<p>补充说明：由于标准模块是不允许用户修改的，所以在应用时请启用头文件映射，在映射头文件修改配置！</p>
+<p>6、使能模块开关<br>
+在工程头文件《application.h》统一使能模块开关，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define XT_DEF_DISABLED                 0                               </span><span style="color:#75715e">/* 禁用模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_DEF_ENABLED                  1                               </span><span style="color:#75715e">/* 使能模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define __XT_WIZNET_REMAP_H
+</span><span style="color:#75715e">#define __XT_WIZNET_PORT_REMAP_H
+</span><span style="color:#75715e">#ifndef XT_APP_WIZNET_EN
+</span><span style="color:#75715e">#define XT_APP_WIZNET_EN                XT_DEF_ENABLED                  </span><span style="color:#75715e">/* 网络服务模块                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><h3 id="三使用">三、使用</h3>
+<p>1、应用示例<br>
+本示范只是以最简单方式展示模块的基本使用，并非一个应用实例！</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_wiznet.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// UDP 演示
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_udp_thread_entry</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>p_arg)
+{
+    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>pbuf;
+    <span style="color:#66d9ef">uint16_t</span>    wkver, lkver;
+    <span style="color:#66d9ef">uint16_t</span>    len, port;    <span style="color:#75715e">//端口
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">uint8_t</span>     ip[<span style="color:#ae81ff">4</span>];        <span style="color:#75715e">//IP地址
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UDP_SK_NUM   0    </span><span style="color:#75715e">//使用第几个socket,0~7
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UDP_SK_BUFSZ 10   </span><span style="color:#75715e">//缓冲大小
+</span><span style="color:#75715e"></span>    
+    <span style="color:#66d9ef">while</span> (<span style="color:#ae81ff">0</span> <span style="color:#f92672">==</span> (pbuf <span style="color:#f92672">=</span> rt_malloc(UDP_SK_BUFSZ)))
+    {
+        rt_thread_delay(<span style="color:#ae81ff">1</span>);
+    }
+    udp_socket:
+    <span style="color:#66d9ef">while</span> (((wkver <span style="color:#f92672">=</span> xt_net_get_rstver()) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x8000</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)    <span style="color:#75715e">//等待网络初始化完成
+</span><span style="color:#75715e"></span>    {
+        rt_thread_delay(<span style="color:#ae81ff">1</span>);
+    }
+    rt_thread_delay(<span style="color:#ae81ff">100</span>);
+    rt_kprintf(<span style="color:#e6db74">&#34;socket 0: net restart!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+    udp_link:
+    <span style="color:#66d9ef">while</span> (((lkver <span style="color:#f92672">=</span> xt_net_get_lnkver()) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x8000</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)    <span style="color:#75715e">//等待插上网线
+</span><span style="color:#75715e"></span>    {
+        rt_thread_delay(<span style="color:#ae81ff">1</span>);
+    }
+    rt_kprintf(<span style="color:#e6db74">&#34;socket 0: net link up!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+    udp_build:
+    socket(UDP_SK_NUM, Sn_MR_UDP, <span style="color:#ae81ff">1001</span>, <span style="color:#ae81ff">0</span>);                  <span style="color:#75715e">//打开socket（UDP协议,本机端口:1001）
+</span><span style="color:#75715e"></span>    rt_kprintf(<span style="color:#e6db74">&#34;socket 0: open!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+    <span style="color:#66d9ef">while</span> (<span style="color:#ae81ff">1</span>)
+    {                                                        <span style="color:#75715e">//如果socket异常,则...
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (xt_socket_chk(UDP_SK_NUM, Sn_MR_UDP, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">goto</span> udp_build; 
+        <span style="color:#66d9ef">if</span> (wkver <span style="color:#f92672">!=</span> xt_net_get_rstver()) <span style="color:#66d9ef">goto</span> udp_socket;   <span style="color:#75715e">//如果网络重启了,则...
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (lkver <span style="color:#f92672">!=</span> xt_net_get_lnkver()) <span style="color:#66d9ef">goto</span> udp_link;     <span style="color:#75715e">//如果网线拔掉了,则...
+</span><span style="color:#75715e"></span>        xt_socket_ot_set(UDP_SK_NUM, <span style="color:#ae81ff">0xFFFFFFFF</span><span style="color:#75715e">/*永久*/</span>, <span style="color:#ae81ff">0</span>); <span style="color:#75715e">//修改本次socket超时操作为永远（可在另一线程使用 xt_socket_ot_set(UDP_SK_NUM,0,0) 强制超时退出）
+</span><span style="color:#75715e"></span>        len <span style="color:#f92672">=</span> xt_socket_recv_chk(UDP_SK_NUM);                <span style="color:#75715e">//检测socket是否收到数据　　　（可在另一线程使用 xt_socket_ot_set(UDP_SK_NUM,0,0) 强制超时退出）
+</span><span style="color:#75715e"></span>        len <span style="color:#f92672">=</span> len <span style="color:#f92672">&gt;</span> UDP_SK_BUFSZ <span style="color:#f92672">?</span> UDP_SK_BUFSZ : len;       <span style="color:#75715e">//处理数据大小与缓冲大小关系
+</span><span style="color:#75715e"></span>        len <span style="color:#f92672">=</span> recvfrom(UDP_SK_NUM, pbuf, len, ip, <span style="color:#f92672">&amp;</span>port);    <span style="color:#75715e">//socket接收数据（同时得到对端的IP及端口）
+</span><span style="color:#75715e"></span>        xt_socket_ot_set(UDP_SK_NUM, <span style="color:#ae81ff">50</span>, <span style="color:#ae81ff">0</span>);                 <span style="color:#75715e">//修改本次socket超时操作为50个系统节拍
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (sendto(UDP_SK_NUM, pbuf, len, ip, port) <span style="color:#f92672">!=</span> len)  <span style="color:#75715e">//socket发送数据（把收到的数据返回给对端）
+</span><span style="color:#75715e"></span>        {                                                    <span style="color:#75715e">//UDP为无连接,socket发送可随时向目标发送
+</span><span style="color:#75715e"></span>            rt_kprintf(<span style="color:#e6db74">&#34;socket 0: sendto return error!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+        }
+    }
+}
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_wiznet.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// TCP 客户端演示
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_tcp_thread_entry</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>p_arg)
+{
+    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>pbuf;
+    <span style="color:#66d9ef">uint16_t</span>    wkver, lkver, cnt;   
+    <span style="color:#66d9ef">uint16_t</span>    rlen,  tlen,  port <span style="color:#f92672">=</span> <span style="color:#ae81ff">1002</span>;  <span style="color:#75715e">//对端端口!!!!!!
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">uint8_t</span>     ip[<span style="color:#ae81ff">4</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">192</span>, <span style="color:#ae81ff">168</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">222</span>}; <span style="color:#75715e">//对端IP地址!!!!
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">uint8_t</span>     t <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;       <span style="color:#75715e">//自动维持TCP连接(@5秒)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">#define TCP_SK_NUM   1   </span><span style="color:#75715e">//使用第几个socket,0~7
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">#define TCP_SK_BUFSZ 100 </span><span style="color:#75715e">//缓冲大小
+</span><span style="color:#75715e"></span>    
+    <span style="color:#66d9ef">while</span> (<span style="color:#ae81ff">0</span> <span style="color:#f92672">==</span> (pbuf <span style="color:#f92672">=</span> rt_malloc(TCP_SK_BUFSZ)))
+    {
+        rt_thread_delay(<span style="color:#ae81ff">1</span>);
+    }
+    tcp_socket:
+    <span style="color:#66d9ef">while</span> (((wkver <span style="color:#f92672">=</span> xt_net_get_rstver()) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x8000</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)    <span style="color:#75715e">//等待网络初始化完成
+</span><span style="color:#75715e"></span>    {
+        rt_thread_delay(<span style="color:#ae81ff">1</span>);
+    }
+    rt_thread_delay(<span style="color:#ae81ff">300</span>);
+    rt_kprintf(<span style="color:#e6db74">&#34;socket 1: net restart!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+    tcp_link:
+    <span style="color:#66d9ef">while</span> (((lkver <span style="color:#f92672">=</span> xt_net_get_lnkver()) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x8000</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)    <span style="color:#75715e">//等待插上网线
+</span><span style="color:#75715e"></span>    {
+        rt_thread_delay(<span style="color:#ae81ff">1</span>);
+    }
+    rt_kprintf(<span style="color:#e6db74">&#34;socket 1: net link up!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+    <span style="color:#66d9ef">while</span> (<span style="color:#ae81ff">1</span>)
+    {
+        tcp_build:
+        setsockopt(TCP_SK_NUM, SO_KEEPALIVEAUTO, <span style="color:#f92672">&amp;</span>t);        <span style="color:#75715e">//打开TCP连接自动维持(@5秒)(keepalive帧)
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">do</span>
+        {
+           <span style="color:#66d9ef">if</span> (wkver <span style="color:#f92672">!=</span> xt_net_get_rstver()) <span style="color:#66d9ef">goto</span> tcp_socket;<span style="color:#75715e">//如果网络重启了,则...
+</span><span style="color:#75715e"></span>           <span style="color:#66d9ef">if</span> (lkver <span style="color:#f92672">!=</span> xt_net_get_lnkver()) <span style="color:#66d9ef">goto</span> tcp_link;  <span style="color:#75715e">//如果网线拔掉了,则...
+</span><span style="color:#75715e"></span>           rt_thread_delay(<span style="color:#ae81ff">2</span>);
+           
+           socket(TCP_SK_NUM, Sn_MR_TCP, <span style="color:#ae81ff">1002</span>, Sn_MR_ND);    <span style="color:#75715e">//打开socket（TCP协议,本机端口:1002）
+</span><span style="color:#75715e"></span>        }
+        <span style="color:#66d9ef">while</span> (connect(TCP_SK_NUM, ip, port) <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span>);          <span style="color:#75715e">//连接TCP服务端
+</span><span style="color:#75715e"></span>        rt_kprintf(<span style="color:#e6db74">&#34;socket 1: open and connected!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+        
+        <span style="color:#75715e">//setsockopt(TCP_SK_NUM, SO_KEEPALIVESEND, 0);       //如果没有打开TCP连接自动维持,则要求应用定时发送维持帧
+</span><span style="color:#75715e"></span>        tlen <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(<span style="color:#e6db74">&#34;tcp client send data!&#34;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+        memcpy(pbuf,  <span style="color:#e6db74">&#34;tcp client send data!&#34;</span>, tlen);
+        <span style="color:#66d9ef">if</span> (send(TCP_SK_NUM, pbuf, tlen) <span style="color:#f92672">!=</span> tlen)            <span style="color:#75715e">//socket发送数据
+</span><span style="color:#75715e"></span>        {
+            rt_kprintf(<span style="color:#e6db74">&#34;socket 1: send len error!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+			disconnect(TCP_SK_NUM);                          <span style="color:#75715e">//断开TCP连接
+</span><span style="color:#75715e"></span>			close(TCP_SK_NUM);                               <span style="color:#75715e">//关闭socket
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">goto</span> tcp_build;
+        }
+        <span style="color:#66d9ef">for</span> (cnt <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; cnt <span style="color:#f92672">&lt;</span> tlen; cnt <span style="color:#f92672">+=</span> rlen)               <span style="color:#75715e">//socket接收数据
+</span><span style="color:#75715e"></span>        {
+            xt_socket_ot_set(TCP_SK_NUM, <span style="color:#ae81ff">100</span><span style="color:#75715e">/*1秒*/</span>, <span style="color:#ae81ff">0</span>);     <span style="color:#75715e">//修改本次socket超时操作为1秒（可在另一线程使用 xt_socket_ot_set(TCP_SK_NUM,0,0) 强制超时退出）
+</span><span style="color:#75715e"></span>            rlen <span style="color:#f92672">=</span> xt_socket_recv_chk(TCP_SK_NUM);           <span style="color:#75715e">//检测socket是否收到数据　 　（可在另一线程使用 xt_socket_ot_set(TCP_SK_NUM,0,0) 强制超时退出）
+</span><span style="color:#75715e"></span>            rlen <span style="color:#f92672">=</span> rlen <span style="color:#f92672">&gt;</span> TCP_SK_BUFSZ <span style="color:#f92672">?</span> TCP_SK_BUFSZ : rlen;<span style="color:#75715e">//处理数据大小与缓冲大小关系
+</span><span style="color:#75715e"></span>            rlen <span style="color:#f92672">=</span> recv(TCP_SK_NUM, pbuf, rlen);             <span style="color:#75715e">//socket接收数据（要求服务端返回客户端发送数据）
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">//break;
+</span><span style="color:#75715e"></span>        }
+                                                             <span style="color:#75715e">//如果socket异常,则...
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (xt_socket_chk(TCP_SK_NUM, Sn_MR_TCP, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">goto</span> tcp_build; 
+        <span style="color:#75715e">//if (wkver != xt_net_get_rstver()) goto tcp_socket;
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//if (lkver != xt_net_get_lnkver()) goto tcp_link;
+</span><span style="color:#75715e"></span>        
+        disconnect(TCP_SK_NUM);                              <span style="color:#75715e">//断开TCP连接
+</span><span style="color:#75715e"></span>        close(TCP_SK_NUM);                                   <span style="color:#75715e">//关闭socket
+</span><span style="color:#75715e"></span>        rt_kprintf(<span style="color:#e6db74">&#34;socket 1: closed!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+    }
+}
+</code></pre></div>
           </section>
       </p>
       
@@ -269,8 +367,8 @@
             XT
         
         
-        <time class="post-date" datetime="2022-10-12T00:00:00Z">
-            12 Oct 2022
+        <time class="post-date" datetime="2022-12-10T00:00:00Z">
+            10 Dec 2022
         </time>
     </footer>
 </article>
@@ -286,7 +384,7 @@
 
 
     <footer class="site-footer clearfix">
-        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2022</section>
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
         
         <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
         

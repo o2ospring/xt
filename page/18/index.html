@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" XT 技术联合小组" />
+  	<meta property="og:site_name" content="XT 技术联合小组" />
+  	<meta property="og:url" content="https://o2ospring.github.io/xt/" />
+    
+    
+    <meta property="og:type" content="website" />
+    
+
+  <title>
+     XT 技术联合小组
+  </title>
+
+    <meta name="description" content="让小组成员拥有团队的技术力量" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://o2ospring.github.io/xt/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://o2ospring.github.io/xt/images/apple-touch-icon.png" />
+    
+    <link rel="stylesheet" type="text/css" href="https://o2ospring.github.io/xt/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+      
+        <link href="https://o2ospring.github.io/xt/index.xml" rel="alternate" type="application/rss+xml" title="XT 技术联合小组" />
+      
+    
+    <meta name="generator" content="Hugo 0.92.0" />
+
+    <link rel="canonical" href="https://o2ospring.github.io/xt/" />
+
+     
+</head>
+<body class="nav-closed">
+<div id="particles-js"></div>
+  
+
+
+ <div class="site-wrapper">
+
+
+
+<header class="main-header " style="background-image: url(https://o2ospring.github.io/xt/images/user.jpg)">
+
+
+    
+
+    <nav class="main-nav overlay clearfix">
+        
+            <a class="blog-logo" href="https://o2ospring.github.io/xt/"><img src="https://o2ospring.github.io/xt/images/user.png" alt="Blog Logo" /></a>
+        
+        
+    </nav>
+<div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">
+              <a class="btn-bootstrap-2 title-scroll" href="#content">XT 技术联合小组</a>
+          </h1>
+          <h2 class="page-description">让小组成员拥有团队的技术力量</h2>
+        </div>
+</div>
+    <a class="scroll-down icon-arrow-left" href="#content"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    
+    
+     
+    
+    
+    
+
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="navigation">
+
+</nav>
+
+    </div>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221011/">软件技术规范</a></h2>
+    </header>
+    <section class="post-excerpt">
+      <p>
+          <section class="post-content">
+            <h3 id="一前言">一、前言</h3>
+<blockquote>
+<p>代码编写规范应该在建立一个工程项目之前，并且贯穿整个项目的始终，以保证代码的一致性。采用标准的代码编写惯例，可以大大简化项目的维护负担，最终达到：简洁、一致、易理解、易维护、易移植的目的，非常有利于团队成员的合作。</p>
+</blockquote>
+<h3 id="二总规范">二、总规范</h3>
+<p>为了规范简单易用，不会制作过多的规则！规范总规则为：<strong>一</strong>）单词与单词使用下划线连接，字符使用全大写或全小写；<strong>二</strong>）源文件和头文件名称使用全小写；<strong>三</strong>）变量和数据结构名称使用全小写；<strong>四</strong>）枚举成员、宏名称使用全大写；<strong>五</strong>）数据类型名称以<code>_t</code>结尾，枚举类型名称以<code>_e</code>结尾；<strong>六</strong>）指针名称以<code>p_</code>开头，函数指针名称以<code>_fn</code>结尾，回调函数名称以<code>_cb</code>结尾；<strong>七</strong>）标准/通用模块的文件、变量、数据结构名称增加<code>xt_</code>前缀，宏定义的名称增加<code>XT_</code>前缀。</p>
+<h3 id="三头文件">三、头文件</h3>
+<ol>
+<li>使用统一的头部声明；</li>
+<li>加入防重复包含的宏；</li>
+<li>此头文件包含重映射；</li>
+<li>一些依赖头文件包含；</li>
+<li>加入C++的兼容语句；</li>
+<li>参数配置；</li>
+<li>数据类型；</li>
+<li>操作函数；</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @file  xt_eeprom.h
+</span><span style="color:#75715e">  * @brief EEPROM存储器操作对象模块
+</span><span style="color:#75715e">  * COPYRIGHT (C) 2022, XT 技术联合小组
+</span><span style="color:#75715e">  * Change Logs:
+</span><span style="color:#75715e">  * Date           Author       Notes
+</span><span style="color:#75715e">  * 2022-10-11     o2ospring    原始版本
+</span><span style="color:#75715e">  */</span>
+<span style="color:#75715e">#ifndef XT_EEPROM_H__
+</span><span style="color:#75715e">#define XT_EEPROM_H__
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//########################################################################################################
+</span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;application.h&#34; /////////////////// &lt;- 按规定[application.h]作为工程所有软件资源管理头文件！   ##</span><span style="color:#75715e">
+</span><span style="color:#75715e">#ifdef __XT_EEPROM_REMAP_H </span><span style="color:#75715e">///////////////// &lt;- 如果在[application.h]定义此宏，则启动头文件重映射←┐   ##
+</span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_eeprom_remap.h&#34; /////////////// &lt;- 当启动重映射,则头文件包含将映射到本行定义的头文件←┘   ##</span><span style="color:#75715e">
+</span><span style="color:#75715e">#else </span><span style="color:#75715e">//##################################################################################################
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt; //////////////////////// &lt;- 使用的数据定义，如: int8_t, uint32_t 等</span><span style="color:#75715e">
+</span><span style="color:#75715e">#if (defined(XT_EEPROM_C__) &amp;&amp; (XT_APP_EEPROM_EN == XT_DEF_ENABLED))
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt; //////////////////////// &lt;- 使用的字符处理，如: strcpy(), memcpy() 等</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;rtthread.h&#34; ////////////////////// &lt;- 使用RT-Thread操作系统</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;rthw.h&#34; ////////////////////////// &lt;- 使用RT-Thread操作系统</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#ifdef __cplusplus
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">extern</span> <span style="color:#e6db74">&#34;C&#34;</span> {
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/********************************************************************************************************/</span>
+<span style="color:#75715e">/*++++++++++++++++++++++++++++++++++++++++++++++ 参数配置 ++++++++++++++++++++++++++++++++++++++++++++++*/</span>
+<span style="color:#75715e">/********************************************************************************************************/</span>
+
+<span style="color:#75715e">// 模块硬件级别临界处理:
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_EEPROM_VARIAB()                       register rt_base_t level;           </span><span style="color:#75715e">// 使用到的变量声明
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_EEPROM_LOCKED()                       level = rt_hw_interrupt_disable()   </span><span style="color:#75715e">// [关]中断总开关
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_EEPROM_UNLOCK()                       rt_hw_interrupt_enable(level)       </span><span style="color:#75715e">// [开]中断总开关
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/********************************************************************************************************/</span>
+<span style="color:#75715e">/*++++++++++++++++++++++++++++++++++++++++++++++ 数据类型 ++++++++++++++++++++++++++++++++++++++++++++++*/</span>
+<span style="color:#75715e">/********************************************************************************************************/</span>
+
+<span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> xt_eeprom_                        <span style="color:#75715e">//新定义的结构体数据类型以“_”结束
+</span><span style="color:#75715e"></span>{
+	<span style="color:#66d9ef">uint8_t</span>  chip_addr;
+	<span style="color:#66d9ef">uint16_t</span> i2c_ch;
+}xt_eeprom_t;                                    <span style="color:#75715e">//新定义的结构体数据类型以“_t”结束
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/********************************************************************************************************/</span>
+<span style="color:#75715e">/*++++++++++++++++++++++++++++++++++++++++++++++ 操作函数 ++++++++++++++++++++++++++++++++++++++++++++++*/</span>
+<span style="color:#75715e">/********************************************************************************************************/</span>
+
+<span style="color:#66d9ef">extern</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">xt_eeprom_write</span>(xt_eeprom_t <span style="color:#f92672">*</span>pob, <span style="color:#66d9ef">uint32_t</span> addr, <span style="color:#66d9ef">uint8_t</span> <span style="color:#f92672">*</span>pda, <span style="color:#66d9ef">uint16_t</span> len);
+
+<span style="color:#75715e">#ifdef __cplusplus
+</span><span style="color:#75715e"></span>	}
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#endif  </span><span style="color:#75715e">//#ifdef __XT_EEPROM_REMAP_H
+</span><span style="color:#75715e"></span><span style="color:#75715e">#endif  </span><span style="color:#75715e">//#ifndef XT_EEPROM_H__
+</span><span style="color:#75715e"></span>
+</code></pre></div><h3 id="四源文件">四、源文件</h3>
+<ol>
+<li>头部声明；</li>
+<li>文件包含；</li>
+<li>模块开关；</li>
+<li>全局变量；</li>
+<li>函数声明；</li>
+<li>函数实现；</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @file  xt_eeprom.c
+</span><span style="color:#75715e">  * @brief EEPROM存储器操作对象模块
+</span><span style="color:#75715e">  * COPYRIGHT (C) 2022, XT 技术联合小组
+</span><span style="color:#75715e">  * Change Logs:
+</span><span style="color:#75715e">  * Date           Author       Notes
+</span><span style="color:#75715e">  * 2022-10-11     o2ospring    原始版本
+</span><span style="color:#75715e">  */</span>
+<span style="color:#75715e">#define   XT_EEPROM_C__
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_eeprom.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#if (defined(XT_APP_EEPROM_EN) &amp;&amp; (XT_APP_EEPROM_EN == XT_DEF_ENABLED))
+</span><span style="color:#75715e">#ifdef    XT_EEPROM_X__   </span><span style="color:#75715e">//再次调用头文件,用于增加存在交叉关系的内容!
+</span><span style="color:#75715e"></span><span style="color:#75715e">#undef    XT_EEPROM_H__
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_eeprom.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//全局变量
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint32_t</span> xt_eeprom_flag <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+<span style="color:#75715e">//函数声明
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">xt_eeprom_write</span>(xt_eeprom_t <span style="color:#f92672">*</span>pob, <span style="color:#66d9ef">uint32_t</span> addr, <span style="color:#66d9ef">uint8_t</span> <span style="color:#f92672">*</span>pda, <span style="color:#66d9ef">uint16_t</span> len);
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">xt_eeprom_read</span>(xt_eeprom_t <span style="color:#f92672">*</span>pob, <span style="color:#66d9ef">uint32_t</span> addr, <span style="color:#66d9ef">uint8_t</span> <span style="color:#f92672">*</span>pbf, <span style="color:#66d9ef">uint16_t</span> len);
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  EEPROM对象写操作
+</span><span style="color:#75715e">  * @param  *pob            要操作的EEPROM对象
+</span><span style="color:#75715e">  * @param  addr            要写入的位置
+</span><span style="color:#75715e">  * @param  *pda            要写入的数据源
+</span><span style="color:#75715e">  * @param  len             要写入的数据长度
+</span><span style="color:#75715e">  * @return ＞0:操作成功
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">xt_eeprom_write</span>(xt_eeprom_t <span style="color:#f92672">*</span>pob, <span style="color:#66d9ef">uint32_t</span> addr, <span style="color:#66d9ef">uint8_t</span> <span style="color:#f92672">*</span>pda, <span style="color:#66d9ef">uint16_t</span> len)
+{
+	<span style="color:#66d9ef">uint8_t</span> i, dat;
+
+	<span style="color:#66d9ef">for</span> (i<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>; i<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">5</span>; i<span style="color:#f92672">++</span>)
+	{
+		<span style="color:#66d9ef">if</span> (dat <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)
+		{
+
+		}
+	}
+}
+
+<span style="color:#75715e">#endif  </span><span style="color:#75715e">//#if (XT_APP_EEPROM_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>
+</code></pre></div><h3 id="四单词缩写">四、单词缩写</h3>
+<p>常规单词缩写字典：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字母</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">缩写词</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">A</td>
+<td style="text-align:left">Average</td>
+<td style="text-align:left">Avg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Addition</td>
+<td style="text-align:left">Add</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Accumulator</td>
+<td style="text-align:left">Acc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Address</td>
+<td style="text-align:left">Addr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Action</td>
+<td style="text-align:left">Act</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Active</td>
+<td style="text-align:left">Act</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Amplitude</td>
+<td style="text-align:left">Amp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Analog Input</td>
+<td style="text-align:left">AI</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Anolog I/O</td>
+<td style="text-align:left">AIO</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">All</td>
+<td style="text-align:left">All</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Alarm</td>
+<td style="text-align:left">Alm</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Allocate</td>
+<td style="text-align:left">Alloc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Analog Output</td>
+<td style="text-align:left">AO</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Apparent</td>
+<td style="text-align:left">App</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Argument</td>
+<td style="text-align:left">Arg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Arrange</td>
+<td style="text-align:left">Arrng</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Array</td>
+<td style="text-align:left">Array</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Assemble</td>
+<td style="text-align:left">Asm</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Attribute</td>
+<td style="text-align:left">Attrib</td>
+</tr>
+<tr>
+<td style="text-align:left">B</td>
+<td style="text-align:left">Back</td>
+<td style="text-align:left">Bk</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Background</td>
+<td style="text-align:left">Bg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Break</td>
+<td style="text-align:left">Brk</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Bar</td>
+<td style="text-align:left">Bar</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Bit</td>
+<td style="text-align:left">Bit</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Block</td>
+<td style="text-align:left">Blk</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Buffer</td>
+<td style="text-align:left">Buf</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Button</td>
+<td style="text-align:left">Btn</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Bypass</td>
+<td style="text-align:left">Bypass</td>
+</tr>
+<tr>
+<td style="text-align:left">C</td>
+<td style="text-align:left">Calibration</td>
+<td style="text-align:left">Cal</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Calculate</td>
+<td style="text-align:left">Calc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Configuration</td>
+<td style="text-align:left">Cfg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Channel</td>
+<td style="text-align:left">Ch</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Change</td>
+<td style="text-align:left">Chg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Check</td>
+<td style="text-align:left">Chk</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Clock</td>
+<td style="text-align:left">Clk</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Clear</td>
+<td style="text-align:left">Clr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Clear Screen</td>
+<td style="text-align:left">Cls</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Command</td>
+<td style="text-align:left">Cmd</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Compare</td>
+<td style="text-align:left">Cmp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Complete</td>
+<td style="text-align:left">Comp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Count</td>
+<td style="text-align:left">Cnt</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Counter</td>
+<td style="text-align:left">Ctr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Column</td>
+<td style="text-align:left">Col</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Communication</td>
+<td style="text-align:left">Comm</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Connect</td>
+<td style="text-align:left">Con</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Construct</td>
+<td style="text-align:left">Cons</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Control</td>
+<td style="text-align:left">Ctrl</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Context</td>
+<td style="text-align:left">Ctx</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Convert</td>
+<td style="text-align:left">Conv</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Copy</td>
+<td style="text-align:left">Cp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Current</td>
+<td style="text-align:left">Cur</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Cursor</td>
+<td style="text-align:left">Csr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Control Word</td>
+<td style="text-align:left">CW</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Color</td>
+<td style="text-align:left">Cr(clr)</td>
+</tr>
+<tr>
+<td style="text-align:left">D</td>
+<td style="text-align:left">Data</td>
+<td style="text-align:left">Dat</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Date</td>
+<td style="text-align:left">Date</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Day</td>
+<td style="text-align:left">Day</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Day-of-week</td>
+<td style="text-align:left">DOW</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Delay</td>
+<td style="text-align:left">Dly</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Debounce</td>
+<td style="text-align:left">Debounce</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Decrease</td>
+<td style="text-align:left">Dec</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Decimal</td>
+<td style="text-align:left">Dec</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Decode</td>
+<td style="text-align:left">Decode</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Define</td>
+<td style="text-align:left">Def</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Degree</td>
+<td style="text-align:left">Deg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Delete</td>
+<td style="text-align:left">Del</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Destination</td>
+<td style="text-align:left">Dst</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Descriptor</td>
+<td style="text-align:left">Desc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Device</td>
+<td style="text-align:left">Dev</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Discrete Input</td>
+<td style="text-align:left">DI</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Digit</td>
+<td style="text-align:left">Dig</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Discrete I/O</td>
+<td style="text-align:left">DIO</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Discrete Output(s)</td>
+<td style="text-align:left">DO</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Disable</td>
+<td style="text-align:left">Dis</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Display</td>
+<td style="text-align:left">Disp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Discovery</td>
+<td style="text-align:left">Disc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Division</td>
+<td style="text-align:left">Div</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Divisor/Division</td>
+<td style="text-align:left">Div</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Document</td>
+<td style="text-align:left">Doc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Down</td>
+<td style="text-align:left">Down</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Dummy</td>
+<td style="text-align:left">Dummy</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Dynamic</td>
+<td style="text-align:left">Dyn</td>
+</tr>
+<tr>
+<td style="text-align:left">E</td>
+<td style="text-align:left">Edge</td>
+<td style="text-align:left">Edge</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Edit</td>
+<td style="text-align:left">Edt</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Effective</td>
+<td style="text-align:left">Eff</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Electric</td>
+<td style="text-align:left">Elec</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Empty</td>
+<td style="text-align:left">Empty</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Enable</td>
+<td style="text-align:left">En</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Engine</td>
+<td style="text-align:left">Eng</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Enter</td>
+<td style="text-align:left">Enter</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Entries</td>
+<td style="text-align:left">Entries</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Equivalent</td>
+<td style="text-align:left">Equiv</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Error(s)</td>
+<td style="text-align:left">Err</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Ethernet</td>
+<td style="text-align:left">Eth</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Engineering Units</td>
+<td style="text-align:left">EU</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Event(s)</td>
+<td style="text-align:left">Event</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Extension</td>
+<td style="text-align:left">Ext</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Exit</td>
+<td style="text-align:left">Exit</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Exception</td>
+<td style="text-align:left">Exc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Expiration</td>
+<td style="text-align:left">Exp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Exponent</td>
+<td style="text-align:left">Exp</td>
+</tr>
+<tr>
+<td style="text-align:left">F</td>
+<td style="text-align:left">Field</td>
+<td style="text-align:left">Fld</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Flag</td>
+<td style="text-align:left">Flg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Flush</td>
+<td style="text-align:left">Flush</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Function(s)</td>
+<td style="text-align:left">Fnct</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Format</td>
+<td style="text-align:left">Frm</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Fraction</td>
+<td style="text-align:left">Fract</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Free</td>
+<td style="text-align:left">Free</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Frequency</td>
+<td style="text-align:left">Freq</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Full</td>
+<td style="text-align:left">Full</td>
+</tr>
+<tr>
+<td style="text-align:left">G</td>
+<td style="text-align:left">Grid</td>
+<td style="text-align:left">Grd</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Gain</td>
+<td style="text-align:left">Gain</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Get</td>
+<td style="text-align:left">Get</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Generate</td>
+<td style="text-align:left">Gen</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Group(s)</td>
+<td style="text-align:left">Grp</td>
+</tr>
+<tr>
+<td style="text-align:left">H</td>
+<td style="text-align:left">Handler</td>
+<td style="text-align:left">Handler</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Harmonic</td>
+<td style="text-align:left">Harm</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Hexadecimal</td>
+<td style="text-align:left">Hex</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">High</td>
+<td style="text-align:left">Hi</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">History</td>
+<td style="text-align:left">Hist</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Hit</td>
+<td style="text-align:left">Hit</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">High Priority Task</td>
+<td style="text-align:left">HPT</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Hour(s)</td>
+<td style="text-align:left">Hr</td>
+</tr>
+<tr>
+<td style="text-align:left">I</td>
+<td style="text-align:left">I.D.</td>
+<td style="text-align:left">Id</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Idle</td>
+<td style="text-align:left">Idle</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Impulse</td>
+<td style="text-align:left">Imp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Image</td>
+<td style="text-align:left">Img</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Increment</td>
+<td style="text-align:left">Inc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Information</td>
+<td style="text-align:left">Info</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Initial</td>
+<td style="text-align:left">Init</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Insert</td>
+<td style="text-align:left">Ins</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Input(s)</td>
+<td style="text-align:left">In</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Initialization</td>
+<td style="text-align:left">Init</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Initialize</td>
+<td style="text-align:left">Init</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Instruction</td>
+<td style="text-align:left">Instr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Interrupt</td>
+<td style="text-align:left">Int</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Invert</td>
+<td style="text-align:left">Inv</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Interrupt Service Routine</td>
+<td style="text-align:left">ISR</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Index</td>
+<td style="text-align:left">Ix</td>
+</tr>
+<tr>
+<td style="text-align:left">K</td>
+<td style="text-align:left">Key</td>
+<td style="text-align:left">Key</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Keyboard</td>
+<td style="text-align:left">Kdb</td>
+</tr>
+<tr>
+<td style="text-align:left">L</td>
+<td style="text-align:left">Label</td>
+<td style="text-align:left">Lab</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Length</td>
+<td style="text-align:left">Len</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">List</td>
+<td style="text-align:left">Lst(Ls)</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Library</td>
+<td style="text-align:left">Lib</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Limit</td>
+<td style="text-align:left">Lim</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Low</td>
+<td style="text-align:left">Lo</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Lower</td>
+<td style="text-align:left">Le</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Lowest</td>
+<td style="text-align:left">Lo</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Lock</td>
+<td style="text-align:left">Lock</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Low Priority Task</td>
+<td style="text-align:left">LTP</td>
+</tr>
+<tr>
+<td style="text-align:left">M</td>
+<td style="text-align:left">Manager</td>
+<td style="text-align:left">Mngr(mgr)</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Magnitude</td>
+<td style="text-align:left">Mag</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Mantissa</td>
+<td style="text-align:left">Man</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Manual</td>
+<td style="text-align:left">Man</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Manufacture</td>
+<td style="text-align:left">Mfg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Maximum</td>
+<td style="text-align:left">Max</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Mailbox</td>
+<td style="text-align:left">Mbox</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Minimum</td>
+<td style="text-align:left">Min</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Mode</td>
+<td style="text-align:left">Mode</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Month</td>
+<td style="text-align:left">Month</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Move</td>
+<td style="text-align:left">Mov</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Message</td>
+<td style="text-align:left">Msg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Measure</td>
+<td style="text-align:left">Meas</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Mask</td>
+<td style="text-align:left">Msk</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Multiplication</td>
+<td style="text-align:left">Mul</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Multiplex</td>
+<td style="text-align:left">Mux</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Make</td>
+<td style="text-align:left">Mk</td>
+</tr>
+<tr>
+<td style="text-align:left">N</td>
+<td style="text-align:left">Negative</td>
+<td style="text-align:left">Neg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Number of</td>
+<td style="text-align:left">Num</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Nesting</td>
+<td style="text-align:left">Nesting</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Neutral</td>
+<td style="text-align:left">Neut</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">New</td>
+<td style="text-align:left">New</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Next</td>
+<td style="text-align:left">Next</td>
+</tr>
+<tr>
+<td style="text-align:left">O</td>
+<td style="text-align:left">Offset</td>
+<td style="text-align:left">Offset</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Old</td>
+<td style="text-align:left">Old</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Operation System</td>
+<td style="text-align:left">OS</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Optimize</td>
+<td style="text-align:left">Opt</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Original</td>
+<td style="text-align:left">Orig</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Output</td>
+<td style="text-align:left">Out</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Overflow</td>
+<td style="text-align:left">Ovf</td>
+</tr>
+<tr>
+<td style="text-align:left">P</td>
+<td style="text-align:left">Password</td>
+<td style="text-align:left">Pwd</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Picture</td>
+<td style="text-align:left">Pic</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Point</td>
+<td style="text-align:left">Pt</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Print</td>
+<td style="text-align:left">Prn</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Program</td>
+<td style="text-align:left">Prg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Package</td>
+<td style="text-align:left">Pkg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Parameter</td>
+<td style="text-align:left">Param</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Pass</td>
+<td style="text-align:left">Pass</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Performance</td>
+<td style="text-align:left">Perf</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Period</td>
+<td style="text-align:left">Per</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Phase</td>
+<td style="text-align:left">Ph</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Port</td>
+<td style="text-align:left">Port</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Position</td>
+<td style="text-align:left">Pos</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Positive</td>
+<td style="text-align:left">Pos</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Power</td>
+<td style="text-align:left">Pwr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Previous</td>
+<td style="text-align:left">Prev</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Priority</td>
+<td style="text-align:left">Prio</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Printer</td>
+<td style="text-align:left">Prt</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">process</td>
+<td style="text-align:left">Proc</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Product</td>
+<td style="text-align:left">Prod</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Protocol</td>
+<td style="text-align:left">Prot</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Pointer</td>
+<td style="text-align:left">Ptr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Put</td>
+<td style="text-align:left">Put</td>
+</tr>
+<tr>
+<td style="text-align:left">Q</td>
+<td style="text-align:left">Queue</td>
+<td style="text-align:left">Q</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Quality</td>
+<td style="text-align:left">Qlty</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Quarter</td>
+<td style="text-align:left">Quar</td>
+</tr>
+<tr>
+<td style="text-align:left">R</td>
+<td style="text-align:left">Raw</td>
+<td style="text-align:left">Raw</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Reactive</td>
+<td style="text-align:left">React</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Recall</td>
+<td style="text-align:left">Rcl</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Rectangle</td>
+<td style="text-align:left">Rect</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Read</td>
+<td style="text-align:left">Rd</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Ready</td>
+<td style="text-align:left">Rdy</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Reference</td>
+<td style="text-align:left">Ref</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Register</td>
+<td style="text-align:left">Reg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Request</td>
+<td style="text-align:left">Req</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Reset</td>
+<td style="text-align:left">Reset</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Reserve</td>
+<td style="text-align:left">Resv</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Resume</td>
+<td style="text-align:left">Resume</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Response</td>
+<td style="text-align:left">Resp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Return</td>
+<td style="text-align:left">Rtn</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Reverse</td>
+<td style="text-align:left">Revs</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Ring</td>
+<td style="text-align:left">Ring</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Row</td>
+<td style="text-align:left">Row</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Repeat</td>
+<td style="text-align:left">Rpt</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Real-Time</td>
+<td style="text-align:left">RT</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Running</td>
+<td style="text-align:left">Running</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Receive</td>
+<td style="text-align:left">Rx</td>
+</tr>
+<tr>
+<td style="text-align:left">S</td>
+<td style="text-align:left">Server</td>
+<td style="text-align:left">Srv</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Source</td>
+<td style="text-align:left">Src</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Statistic</td>
+<td style="text-align:left">Stat</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">Str</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Sybase</td>
+<td style="text-align:left">Syb</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Sample</td>
+<td style="text-align:left">Smp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Scale</td>
+<td style="text-align:left">Scale</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Scale Factor</td>
+<td style="text-align:left">SF</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Scaling</td>
+<td style="text-align:left">Scaling</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Scan</td>
+<td style="text-align:left">Scan</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Schedule</td>
+<td style="text-align:left">Sched</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Scheduler</td>
+<td style="text-align:left">Sched</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Screen</td>
+<td style="text-align:left">Scr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Second(s)</td>
+<td style="text-align:left">Sec</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Segment(s)</td>
+<td style="text-align:left">Seg</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Select</td>
+<td style="text-align:left">Sel</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Semaphore</td>
+<td style="text-align:left">Sem</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Sequence</td>
+<td style="text-align:left">Seq</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Server</td>
+<td style="text-align:left">Svr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Set</td>
+<td style="text-align:left">Set</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Setting</td>
+<td style="text-align:left">Setting</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Signal</td>
+<td style="text-align:left">Sig</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Size</td>
+<td style="text-align:left">Size</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Seven-segments</td>
+<td style="text-align:left">SS</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Sourse</td>
+<td style="text-align:left">Src</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Start</td>
+<td style="text-align:left">Start</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Statistic(s)</td>
+<td style="text-align:left">Stat</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Status</td>
+<td style="text-align:left">Stat</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Stack</td>
+<td style="text-align:left">Stk</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Standard</td>
+<td style="text-align:left">Std</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Stop</td>
+<td style="text-align:left">Stop</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">Str</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Subtraction</td>
+<td style="text-align:left">Sub</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Suspend</td>
+<td style="text-align:left">Suspend</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Switch</td>
+<td style="text-align:left">Sw</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Synchronize</td>
+<td style="text-align:left">Synch</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">System</td>
+<td style="text-align:left">Syst</td>
+</tr>
+<tr>
+<td style="text-align:left">T</td>
+<td style="text-align:left">Temp</td>
+<td style="text-align:left">Tmp</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Text</td>
+<td style="text-align:left">Txt</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Task</td>
+<td style="text-align:left">Task</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Table</td>
+<td style="text-align:left">Tbl</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Threshold</td>
+<td style="text-align:left">Th</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Tick</td>
+<td style="text-align:left">Tick</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Time</td>
+<td style="text-align:left">Time</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Timer</td>
+<td style="text-align:left">Tmr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Toggle</td>
+<td style="text-align:left">Tgl</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Total</td>
+<td style="text-align:left">Tot</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Trigger</td>
+<td style="text-align:left">Trig</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Time-stamp</td>
+<td style="text-align:left">TS</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Timeout</td>
+<td style="text-align:left">TO</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Unlock</td>
+<td style="text-align:left">Unlock</td>
+</tr>
+<tr>
+<td style="text-align:left">U</td>
+<td style="text-align:left">User</td>
+<td style="text-align:left">Usr</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Up</td>
+<td style="text-align:left">Up</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Update</td>
+<td style="text-align:left">Update</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Utility</td>
+<td style="text-align:left">Util</td>
+</tr>
+<tr>
+<td style="text-align:left">V</td>
+<td style="text-align:left">Value</td>
+<td style="text-align:left">Val</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Vector</td>
+<td style="text-align:left">Vect</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Version</td>
+<td style="text-align:left">Ver</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Variable</td>
+<td style="text-align:left">Var</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Visible</td>
+<td style="text-align:left">Vis</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Voltage</td>
+<td style="text-align:left">Vol</td>
+</tr>
+<tr>
+<td style="text-align:left">W</td>
+<td style="text-align:left">Watchdog</td>
+<td style="text-align:left">Wdog</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Window</td>
+<td style="text-align:left">Wnd(win)</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left">Write</td>
+<td style="text-align:left">Wr</td>
+</tr>
+<tr>
+<td style="text-align:left">Y</td>
+<td style="text-align:left">Year</td>
+<td style="text-align:left">Year</td>
+</tr>
+</tbody>
+</table>
+<p>© 本文内容摘自《一春又一春》博文 ©</p>
+
+          </section>
+      </p>
+      
+    </section>
+    <footer class="post-meta">
+        
+            <img class="author-thumb" src="https://o2ospring.github.io/xt/images/user.png" alt="Author image" nopin="nopin" />
+        
+        
+            XT
+        
+        
+        <time class="post-date" datetime="2022-10-11T00:00:00Z">
+            11 Oct 2022
+        </time>
+    </footer>
+</article>
+
+    
+
+    <nav class="pagination" role="navigation">
+
+</nav>
+
+
+</main>
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/index.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.min.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.js"></script>  
+
+</body>
+</html>
+

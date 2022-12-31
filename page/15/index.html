@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" XT 技术联合小组" />
+  	<meta property="og:site_name" content="XT 技术联合小组" />
+  	<meta property="og:url" content="https://o2ospring.github.io/xt/" />
+    
+    
+    <meta property="og:type" content="website" />
+    
+
+  <title>
+     XT 技术联合小组
+  </title>
+
+    <meta name="description" content="让小组成员拥有团队的技术力量" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://o2ospring.github.io/xt/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://o2ospring.github.io/xt/images/apple-touch-icon.png" />
+    
+    <link rel="stylesheet" type="text/css" href="https://o2ospring.github.io/xt/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+      
+        <link href="https://o2ospring.github.io/xt/index.xml" rel="alternate" type="application/rss+xml" title="XT 技术联合小组" />
+      
+    
+    <meta name="generator" content="Hugo 0.92.0" />
+
+    <link rel="canonical" href="https://o2ospring.github.io/xt/" />
+
+     
+</head>
+<body class="nav-closed">
+<div id="particles-js"></div>
+  
+
+
+ <div class="site-wrapper">
+
+
+
+<header class="main-header " style="background-image: url(https://o2ospring.github.io/xt/images/user.jpg)">
+
+
+    
+
+    <nav class="main-nav overlay clearfix">
+        
+            <a class="blog-logo" href="https://o2ospring.github.io/xt/"><img src="https://o2ospring.github.io/xt/images/user.png" alt="Blog Logo" /></a>
+        
+        
+    </nav>
+<div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">
+              <a class="btn-bootstrap-2 title-scroll" href="#content">XT 技术联合小组</a>
+          </h1>
+          <h2 class="page-description">让小组成员拥有团队的技术力量</h2>
+        </div>
+</div>
+    <a class="scroll-down icon-arrow-left" href="#content"><span class="hidden">Scroll Down</span></a>
+</header>
+
+<main id="content" class="content" role="main">
+    
+    
+     
+    
+    
+    
+
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="navigation">
+
+</nav>
+
+    </div>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221123/">红外发送服务模块</a></h2>
+    </header>
+    <section class="post-excerpt">
+      <p>
+          <section class="post-content">
+            <h3 id="一构架">一、构架</h3>
+<p>1、功能简介<br>
+红外发送服务模块是为应用程序发送红外遥控码提供统一、规范的驱动接口。支持任意载波频率发送（30K～56KHz）；支持直接发送时间码（时间码默认格式为：有载波时间、无载波时间、有、无 …）；支持即时解码发送（通过回调接口实现解一个码发一个码）。</p>
+<p>2、模块架构<br>
+<img src="../img/20221123_1_01.jpg" alt="模块架构"></p>
+<p>3、环境要求  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">环境</th>
+<th style="text-align:left">要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">软件环境</td>
+<td style="text-align:left">实时操作系统 或 裸机环境 均可</td>
+</tr>
+<tr>
+<td style="text-align:left">硬件环境</td>
+<td style="text-align:left">STM32F103 及更高性能 MCU</td>
+</tr>
+</tbody>
+</table>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>4、红外知识<br>
+4.1、<strong>红外发送编码格式</strong> ：<br>
+红外码发送无非就是发送前半段有载波码，再隔一段时间（可理解为是后半段无载波码），如此循环发送多组码。红外编码大体分两部分：起始 + 数据。其中常用 NEC 协议数据编码：起始 + 地址 + 地址(取反) + 数据 + 数据(取反)。NEC 协议信号编码：起始由 9ms 载波码 + 4.5ms 无载波码组成，数据 bit = 0 由 0.56ms 载波码 + 0.56ms 无载波码组成，数据 bit = 1 由 0.56ms 载波码 + 1.68ms 无载波码组成。根据红外码库方案商提供的信息，无载波码最长有超过 100ms，如果使用两字节表示时间码，则建议使用 4us 作为计时单位。</p>
+<p>4.2、<strong>红外载波频率范围</strong> ：<br>
+一般在 30~56KHz 之间，常用频率为 30KHz、33KHz、36KHz、38KHz、40KHz、56KHz，其中 38KHz 为最常用。其实这个载波频率与晶振及芯片分频有关系，例如某方案：使用的 455KHz 晶振，芯片对晶振进行整数分频，分频系数一般为 12，所以 455kHz÷12≈37.9kHz≈38kHz 的载波频率。</p>
+<p>4.3、<strong>关于载波频率占空比</strong><br>
+网上有说是 1:1、1:3 之类的，建议还是 1:1 为好，因为这个要与常规接收头适配。</p>
+<p>4.4、<strong>红外码库方案提供商</strong><br>
+当前有一些手机带有红外遥控功能，它其实就是手机商 APP 从红外码库方案提供商获取红外码，通过手机红外发射头发送出去，实现遥控屋里电器。现在兴起智能家居系统，要实现场景联动，需要控制第三方设备，其中一种方式就是通过红外来控制。例如：典型控制-打开空调控制室内温度。</p>
+<p>4.4.1、深圳市辉联智控科技有限公司</p>
+<ol>
+<li><a href="http://www.hongwaimaku.com/">官网</a></li>
+</ol>
+<p><img src="../img/20221123_1_04_41.jpg" alt="方案介绍"><br>
+<img src="../img/20221123_1_04_42.jpg" alt="合作模式"></p>
+<p>4.4.2、青岛酷控网络科技有限公司</p>
+<ol>
+<li><a href="https://www.kookong.com/">官网</a></li>
+</ol>
+<p><img src="../img/20221123_1_04_43.jpg" alt="产品服务"></p>
+<h3 id="二移植">二、移植</h3>
+<p>1、添加源文件<br>
+将模块源文件、文件包含路径添加到工程，示例：</p>
+<p><img src="../img/20221123_2_01.jpg" alt="添加源文件到工程"></p>
+<p>2、加入引脚定义<br>
+在工程头文件《board.h》统一加入引脚定义，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// 红外发送服务+++++++++++++++++++++++
+</span><span style="color:#75715e">// 配置PWM的频率
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_IRSEND_TIM_DIV            1                                      </span><span style="color:#75715e">/* 定时器的时钟分频         */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_TIM_PWM_HZ(hz)   ((72000000/(XT_IRSEND_TIM_DIV+1)/(hz))-1)</span><span style="color:#75715e">/* PWM 100%数值(≤0xFFFF)   */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置PWM的定时器
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_IRSEND_TIM                TIM3                               </span><span style="color:#75715e">/* 定时器                       */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_TIM_CLK_DI()     __HAL_RCC_TIM3_CLK_DISABLE()         </span><span style="color:#75715e">/* 定时器时钟禁能               */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_TIM_CLK_EN()     __HAL_RCC_TIM3_CLK_ENABLE()          </span><span style="color:#75715e">/* 定时器时钟使能               //
+</span><span style="color:#75715e">#define XT_IRSEND_TIM_AFIO_REMAP() __HAL_AFIO_REMAP_TIM3_PARTIAL()      // 定时器引脚重映射(不用则屏蔽) */</span><span style="color:#75715e"> </span><span style="color:#75715e">//只有 TIM1~5 才有映射 (分为:重映射[TIM4~5]、部分和完全重映射TIM1~3)
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置PWM的通道（只使用1路）
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_IRSEND_PWM_CLK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()         </span><span style="color:#75715e">/* PWM 管脚时钟使能             */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_PWM_GPIO           GPIOB                              </span><span style="color:#75715e">/* PWM 所在端口                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_PWM_PIN            GPIO_PIN_1                         </span><span style="color:#75715e">/* PWM 所在管脚                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_PWM_OCMODE         TIM_OCMODE_PWM1 </span><span style="color:#75715e">/*不能改*/</span><span style="color:#75715e">         </span><span style="color:#75715e">/* PWM 输出极性模式(2则反极性)  */</span><span style="color:#75715e"> </span><span style="color:#75715e">//使用在:非0%,非停止
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_IRSEND_PWM_OCPOLARITY     TIM_OCPOLARITY_HIGH                </span><span style="color:#75715e">/* PWM 有效占空比输出的电平     // //正向通道
+</span><span style="color:#75715e">#define XT_IRSEND_PWM_OCIDLESTATE    TIM_OCIDLESTATE_RESET              // PWM 空闲时电平(不用则屏蔽)   */</span><span style="color:#75715e"> </span><span style="color:#75715e">//只针对TIM1,其它定时器默认为低电平
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_IRSEND_PWM_CCR            CCR4                               </span><span style="color:#75715e">/* PWM 占空比寄存器(TIM3-&gt;CCR4) */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_PWM_TIM_CHANNEL    TIM_CHANNEL_4                      </span><span style="color:#75715e">/* PWM 所在定时器通道           */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_TIM_DMA_ID_CC      TIM_DMA_ID_CC4                     </span><span style="color:#75715e">/* 定时器DMA更新请求通道(如:CC4)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_TIM_DMA_CC         TIM_DMA_CC4                        </span><span style="color:#75715e">/* 定时器DMA更新事件通道(如:CC4)*/</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// 配置PWM的DMA
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define XT_IRSEND_DMA_CLK_ENABLE() __HAL_RCC_DMA1_CLK_ENABLE()          </span><span style="color:#75715e">/* DMA 时钟使能                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_DMA_CHANNEL        DMA1_Channel3                      </span><span style="color:#75715e">/* DMA 通道                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_DMA_IRQn           DMA1_Channel3_IRQn                 </span><span style="color:#75715e">/* DMA 中断通道                 */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_DMA_PRE_INT_PRIO   0                                  </span><span style="color:#75715e">/* DMA 通道抢占中断优先级       */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_DMA_SUB_INT_PRIO   0                                  </span><span style="color:#75715e">/* DMA 通道响应中断优先级       */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_DMA_PRIORITY       DMA_PRIORITY_MEDIUM                </span><span style="color:#75715e">/* DMA 通道优先级（中等）       */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_DMA_IRQHandler     DMA1_Channel3_IRQHandler           </span><span style="color:#75715e">/* DMA 中断向量函数             */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_IRSEND_RAM_SUM            65 </span><span style="color:#75715e">/*以空间换取执行效率*/</span><span style="color:#75715e">          </span><span style="color:#75715e">/* DMA 转传数据源大小(数据个数) */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/* 补充：STM32F103 DMA 资源介绍
+</span><span style="color:#75715e">DMA1_Channel1: ADC1,TIM2_CH3,TIM4_CH1
+</span><span style="color:#75715e">DMA1_Channel2: SPI1_RX,USART3_TX,TIM1_CH1,TIM2_UP,TIM3_CH3
+</span><span style="color:#75715e">DMA1_Channel3: SPI1_TX,USART3_RX,TIM1_CH2,TIM3_CH4/TIM3_UP
+</span><span style="color:#75715e">DMA1_Channel4: SPI/I2S2_RX,USART1_TX,I2C2_TX,TIM1_TX4/TIM1_TRIG/TIM1_COM,TIM4_CH2
+</span><span style="color:#75715e">DMA1_Channel5: SPI/I2S2_TX,USART1_RX,I2C2_RX,TIM1_UP,TIM2_CH1,TIM4_CH3
+</span><span style="color:#75715e">DMA1_Channel6: USART2_RX,I2C1_TX,TIM1_CH3,TIM3_CH1/TIM3_TRIG
+</span><span style="color:#75715e">DMA1_Channel7: USART2_TX,I2C1_RX,TIM2_CH2/TIM2_CH4,TIM4_UP
+</span><span style="color:#75715e">DMA2_Channel1: SPI/I2S3_RX,TIM5_CH4/TIM5_TRIG,TIM8_CH3/TIM8_UP
+</span><span style="color:#75715e">DMA2_Channel2: SPI/I2S3_TX,TIM5_CH3/TIM5_UP,TIM8_CH4/TIM8_TRIG,TIM8_COM
+</span><span style="color:#75715e">DMA2_Channel3: UART4_RX,TIM6_UP/DAC_CH1,TIM8_CH1
+</span><span style="color:#75715e">DMA2_Channel4: SDIO,TIM5_CH2,TIM7_UP/DAC_CH2
+</span><span style="color:#75715e">DMA2_Channel5: ADC3,UART4_TX,TIM5_CH1,TIM8_CH2
+</span><span style="color:#75715e">*/</span>
+</code></pre></div><p>3、加入初始函数<br>
+在工程硬件初始化函数中加入模块硬件初始化，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">bsp_board_init</span>(<span style="color:#66d9ef">void</span>)
+{
+	.
+	.
+	<span style="color:#75715e">#if (XT_APP_IRSEND_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e"></span>	xt_irsend_hw_init();
+	<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>	.
+	.
+}
+</code></pre></div><p>补充说明：如果工程有自动初始架构，可以由宏<code>XT_HARD_INIT_2_TAB_EXPORT(func,desc)</code>自动调用函数进行初始化！</p>
+<p>4、包含头文件<br>
+在使用模块的应用程序中加入头文件包含，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#if (XT_APP_IRSEND_EN == XT_DEF_ENABLED)
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_ir_send.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><p>5、配置模块参数<br>
+根据实际的使用环境配置模块参数，示例：</p>
+<p><img src="../img/20221123_2_05.jpg" alt="配置模块参数"></p>
+<p>补充说明：由于标准模块是不允许用户修改的，所以在应用时请启用头文件映射，在映射头文件修改配置！</p>
+<p>6、使能模块开关<br>
+在工程头文件《application.h》统一使能模块开关，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define XT_DEF_DISABLED                 0                               </span><span style="color:#75715e">/* 禁用模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#define XT_DEF_ENABLED                  1                               </span><span style="color:#75715e">/* 使能模块                     */</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define __XT_IR_SEND_REMAP_H
+</span><span style="color:#75715e">#ifndef XT_APP_IRSEND_EN
+</span><span style="color:#75715e">#define XT_APP_IRSEND_EN                XT_DEF_ENABLED                  </span><span style="color:#75715e">/* 红外遥控发送服务模块         */</span><span style="color:#75715e">
+</span><span style="color:#75715e">#endif
+</span></code></pre></div><h3 id="三使用">三、使用</h3>
+<p>1、应用示例<br>
+本示范只是以最简单方式展示模块的基本使用，并非一个应用实例！</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;rtthread.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;xt_ir_send.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+xt_irsend_obj_t app_irsend_obj; <span style="color:#75715e">//红外发送服务应用对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> app_irsend_buf[<span style="color:#ae81ff">100</span>];   <span style="color:#75715e">//红外发送缓冲
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> app_irsend_flag <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;   <span style="color:#75715e">//状态
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  红外发送服务[打开]操作成功协同回调
+</span><span style="color:#75715e">  * @param  *p_ob      红外发送服务对象
+</span><span style="color:#75715e">  * @return void
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_irsend_open_cb</span>(<span style="color:#66d9ef">const</span> xt_irsend_obj_t <span style="color:#f92672">*</span>p_ob)
+{
+	<span style="color:#75715e">//注意：上层已处理任务互斥!!
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">//XT_IRSEND_TASK_LOCKED(); //&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+</span><span style="color:#75715e"></span>	app_irsend_flag <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">//根据实际通知应用程序...
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">//XT_IRSEND_TASK_UNLOCK(); //&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  红外发送服务[关闭]操作成功协同回调
+</span><span style="color:#75715e">  * @param  *p_ob      红外发送服务对象
+</span><span style="color:#75715e">  * @return void
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_irsend_close_cb</span>(<span style="color:#66d9ef">const</span> xt_irsend_obj_t <span style="color:#f92672">*</span>p_ob)
+{
+	<span style="color:#75715e">//注意：上层已处理任务互斥!!
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">//XT_IRSEND_TASK_LOCKED(); //&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+</span><span style="color:#75715e"></span>	app_irsend_flag <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">//根据实际通知应用程序...
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">//XT_IRSEND_TASK_UNLOCK(); //&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  红外发送刚刚[完成]通知回调
+</span><span style="color:#75715e">  * @param  *p_ob      红外发送服务对象
+</span><span style="color:#75715e">  * @return void
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_irsend_complete_cb</span>(<span style="color:#66d9ef">const</span> xt_irsend_obj_t <span style="color:#f92672">*</span>p_ob)
+{
+	<span style="color:#75715e">//注意：在中断中通知!!
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">//根据实际通知应用程序...
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  [打开]红外发送服务
+</span><span style="color:#75715e">  * @param  void
+</span><span style="color:#75715e">  * @return void
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_irsend_open</span>(<span style="color:#66d9ef">void</span>)
+{
+	app_irsend_obj.end_us               <span style="color:#f92672">=</span> <span style="color:#ae81ff">100000</span>;                 <span style="color:#75715e">//【属性】发完1帧红外码后强行插入间隔时间（单位:us）
+</span><span style="color:#75715e"></span>	app_irsend_obj.ir_khz               <span style="color:#f92672">=</span> <span style="color:#ae81ff">38</span>;                     <span style="color:#75715e">//【属性】红外载波频率（预设）（单位:KHz）
+</span><span style="color:#75715e"></span>	app_irsend_obj.ir_num               <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;                      <span style="color:#75715e">//【属性】红外发送通道编号（＜IRSEND_SUM）
+</span><span style="color:#75715e"></span>	app_irsend_obj.send_buf_size        <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(app_irsend_buf); <span style="color:#75715e">//【属性】红外发送缓冲大小（单位：字节）
+</span><span style="color:#75715e"></span>	app_irsend_obj.p_send_buf           <span style="color:#f92672">=</span> app_irsend_buf;         <span style="color:#75715e">//【属性】红外发送缓冲
+</span><span style="color:#75715e"></span>	app_irsend_obj.p_irsend_open_fn     <span style="color:#f92672">=</span> app_irsend_open_cb;     <span style="color:#75715e">//【应用服务】注册红外发送服务[打开]操作成功协同回调
+</span><span style="color:#75715e"></span>	app_irsend_obj.p_irsend_close_fn    <span style="color:#f92672">=</span> app_irsend_close_cb;    <span style="color:#75715e">//【应用服务】注册红外发送服务[关闭]操作成功协同回调
+</span><span style="color:#75715e"></span>	app_irsend_obj.p_irsend_complete_fn <span style="color:#f92672">=</span> app_irsend_complete_cb; <span style="color:#75715e">//【应用服务】注册红外发送刚刚[完成]通知回调
+</span><span style="color:#75715e"></span>	app_irsend_obj.p_hw_open_fn         <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;                      <span style="color:#75715e">//【硬件服务】注册硬件驱动程序（0:本应用不提供硬件驱动程序）
+</span><span style="color:#75715e"></span>
+	<span style="color:#66d9ef">if</span> (xt_irsend_open(<span style="color:#f92672">&amp;</span>app_irsend_obj) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>)
+	{
+		rt_kprintf(<span style="color:#e6db74">&#34;xt_irsend_open return error!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+	}
+}
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  [关闭]红外发送服务
+</span><span style="color:#75715e">  * @param  void
+</span><span style="color:#75715e">  * @return void
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_irsend_close</span>(<span style="color:#66d9ef">void</span>)
+{
+	<span style="color:#66d9ef">if</span> (xt_irsend_close(<span style="color:#f92672">&amp;</span>app_irsend_obj) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>)
+	{
+		rt_kprintf(<span style="color:#e6db74">&#34;xt_irsend_close return error!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+	}
+}
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  [发送]红外码示例
+</span><span style="color:#75715e">  * @param  void
+</span><span style="color:#75715e">  * @return void
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_irsend</span>(<span style="color:#66d9ef">void</span>)
+{
+	<span style="color:#66d9ef">uint16_t</span> send_dat[<span style="color:#ae81ff">6</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">9000</span>, <span style="color:#ae81ff">4500</span>,  <span style="color:#ae81ff">560</span>,  <span style="color:#ae81ff">1680</span>,  <span style="color:#ae81ff">560</span>,  <span style="color:#ae81ff">560</span>}; <span style="color:#75715e">//单位:us
+</span><span style="color:#75715e"></span>
+	<span style="color:#75715e">//直接发送时间码
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> (xt_irsend_send(<span style="color:#f92672">&amp;</span>app_irsend_obj, send_dat, <span style="color:#66d9ef">sizeof</span>(send_dat)<span style="color:#75715e">/*字节*/</span>, <span style="color:#ae81ff">1</span><span style="color:#75715e">/*us*/</span>, <span style="color:#ae81ff">38</span><span style="color:#75715e">/*KHz*/</span>) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>)
+	{
+		rt_kprintf(<span style="color:#e6db74">&#34;xt_irsend_send return error!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+	}
+
+	rt_thread_delay(RT_TICK_PER_SECOND);
+
+	<span style="color:#75715e">//即时解码发送                                           ┌假设 send_dat 为压缩码
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> (xt_irsend_decode_send(<span style="color:#f92672">&amp;</span>app_irsend_obj, (<span style="color:#66d9ef">uint8_t</span> <span style="color:#f92672">*</span>)send_dat, <span style="color:#66d9ef">sizeof</span>(send_dat), app_irdecode<span style="color:#75715e">/*解码函数*/</span>) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>)
+	{
+		rt_kprintf(<span style="color:#e6db74">&#34;xt_irsend_decode_send return error!</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#34;</span>);
+	}
+}
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">  * @brief  [解码函数]示例（即时解码为时间码）
+</span><span style="color:#75715e">  * @param  *pob_tmp   运算现场状态（大小为:sizeof(((xt_irsend_obj_t *)0)-&gt;decode_tmp)字节）
+</span><span style="color:#75715e">  * @param  *p_code    红外压缩码  （通过算法解码为时间码）
+</span><span style="color:#75715e">  * @param  *p_step    解码步骤    （0:进来表刚开始/返回则表异常，0xFFFF:返回结束）
+</span><span style="color:#75715e">  * @return 解码后的数据（数据的[bit0]同时用作是否有载波标志,bit0=1:表示此个数据为有载波时间）
+</span><span style="color:#75715e">  */</span>
+<span style="color:#66d9ef">uint16_t</span> <span style="color:#a6e22e">app_irdecode</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>pob_tmp, <span style="color:#66d9ef">uint16_t</span> <span style="color:#f92672">*</span>p_code, <span style="color:#66d9ef">uint16_t</span> <span style="color:#f92672">*</span>p_step)
+{
+	<span style="color:#66d9ef">switch</span> (<span style="color:#f92672">*</span>p_step)
+	{	                          <span style="color:#75715e">//第一次返回[红外时间码单位]和[红外载波频率] ←────────────────┐
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">:</span> <span style="color:#f92672">*</span>p_step <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;     <span style="color:#66d9ef">return</span> ((<span style="color:#66d9ef">uint16_t</span>)(<span style="color:#ae81ff">1</span><span style="color:#75715e">/*us,红外时间码单位*/</span>) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">|</span> (<span style="color:#ae81ff">38</span><span style="color:#75715e">/*KHz,红外载波频率*/</span>); <span style="color:#75715e">//┘
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> <span style="color:#f92672">*</span>p_step <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;     <span style="color:#66d9ef">return</span> (<span style="color:#ae81ff">9000</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">1</span>); <span style="color:#75715e">//1.有载波时间码
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span> <span style="color:#f92672">*</span>p_step <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;     <span style="color:#66d9ef">return</span> (<span style="color:#ae81ff">4500</span>    ); <span style="color:#75715e">//2.无载波时间码
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">:</span> <span style="color:#f92672">*</span>p_step <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;     <span style="color:#66d9ef">return</span> (<span style="color:#ae81ff">560</span>  <span style="color:#f92672">|</span> <span style="color:#ae81ff">1</span>); <span style="color:#75715e">//3.有载波时间码
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span> <span style="color:#f92672">*</span>p_step <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;     <span style="color:#66d9ef">return</span> (<span style="color:#ae81ff">1680</span>    ); <span style="color:#75715e">//4.无载波时间码
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span> <span style="color:#f92672">*</span>p_step <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;     <span style="color:#66d9ef">return</span> (<span style="color:#ae81ff">560</span>  <span style="color:#f92672">|</span> <span style="color:#ae81ff">1</span>); <span style="color:#75715e">//5.有载波时间码
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#ae81ff">6</span><span style="color:#f92672">:</span> <span style="color:#f92672">*</span>p_step <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xFFFF</span>; <span style="color:#66d9ef">return</span> (<span style="color:#ae81ff">560</span>     ); <span style="color:#75715e">//6.无载波时间码（本例此处为最后一个红外码）
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">default</span><span style="color:#f92672">:*</span>p_step <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;      <span style="color:#66d9ef">return</span> (<span style="color:#ae81ff">0</span>       ); <span style="color:#75715e">//异常返回!!!!!!
+</span><span style="color:#75715e"></span>	}
+}
+</code></pre></div>
+          </section>
+      </p>
+      
+    </section>
+    <footer class="post-meta">
+        
+            <img class="author-thumb" src="https://o2ospring.github.io/xt/images/user.png" alt="Author image" nopin="nopin" />
+        
+        
+            XT
+        
+        
+        <time class="post-date" datetime="2022-11-23T00:00:00Z">
+            23 Nov 2022
+        </time>
+    </footer>
+</article>
+
+    
+
+    <nav class="pagination" role="navigation">
+
+</nav>
+
+
+</main>
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://o2ospring.github.io/xt/js/index.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.min.js"></script>
+    <script src="https://o2ospring.github.io/xt/js/particles.js"></script>  
+
+</body>
+</html>
+

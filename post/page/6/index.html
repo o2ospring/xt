@@ -94,47 +94,79 @@
 	   
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20221128/">软件平台使用</a></h2>
+        <h2 class="post-title"><a href="https://o2ospring.github.io/xt/post/20230224/">MD5、AES、DES 摘要/加密算法</a></h2>
     </header>
     <section class="post-excerpt">
       <p>
           <section class="post-content">
-            <h3 id="一通用技术开发平台的使用">一、通用技术开发平台的使用</h3>
-<blockquote>
-<p>目前平台使用到的工具有：git、make、cgdb、arm-none-eabi-gdb、arm-none-eabi-gcc、openOCD、libusb 等。关于这些工具的安装及使用，以后再进一步介绍。本章节主要是以最简单的方式介绍开发平台的编译与调试：</p>
-</blockquote>
-<p>1、下载工程：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git clone --recursive https://github.com/o2ospring/xt_rt-thread.git
-</code></pre></div><p><img src="../img/20221128_1_01_01.jpg" alt="下载工程"></p>
-<p>2、进入工程：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd xt_rt-thread/bsp/stm32/xt_stm32f103/
-</code></pre></div><p><img src="../img/20221128_1_02_01.jpg" alt="进入工程"></p>
-<p>3、清除文件</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make clean
-</code></pre></div><p><img src="../img/20221128_1_03_01.jpg" alt="清除文件"></p>
-<p>4、编译工程：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make all
-</code></pre></div><p><img src="../img/20221128_1_04_01.jpg" alt="编译工程"></p>
-<p><img src="../img/20221128_1_04_02.jpg" alt="编译结果"></p>
-<p>5、烧录固件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make download
-</code></pre></div><p><img src="../img/20221128_1_05_01.jpg" alt="烧录固件"></p>
-<p>6、进入调试：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make debug
-</code></pre></div><p><img src="../img/20221128_1_06_01.jpg" alt="进入调试"></p>
-<p><img src="../img/20221128_1_06_02.jpg" alt="继续进入"></p>
-<p><img src="../img/20221128_1_06_03.jpg" alt="下载固件"></p>
-<p><img src="../img/20221128_1_06_04.jpg" alt="调试操作"></p>
-<p>7、命令总览：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make clean     //清除
-make all       //编译
-make download  //烧录
-make debug     //调试
-</code></pre></div><p>备注：可输入<code>make help</code>查看目前支持的操作命令！</p>
-<h3 id="二dali-灯具开发平台的使用">二、DALI 灯具开发平台的使用</h3>
-<p>待续……</p>
-<h3 id="三knx-系统开发平台的使用">三、KNX 系统开发平台的使用</h3>
-<p>待续……</p>
+            <h3 id="一说明">一、说明</h3>
+<p>1、功能简介<br>
+SHA、MD5、AES、DES 摘要/加密算法简介：</p>
+<ul>
+<li>SHA　不可逆过程的摘要算法，结果是【20字节】【32字节】【64字节】，主要用途有：验证消息完整性，安全访问认证，数据签名。</li>
+<li>MD5　不可逆过程的摘要算法，结果是 128位【16字节】，主要用途有：验证消息完整性，安全访问认证，数据签名。</li>
+<li>AES　新一代的对称加密算法，密钥长度可以选择 128位【16字节】，192位【24字节】和 256位【32字节】密钥。</li>
+<li>DES　比较老的对称加密算法，密钥长度是 56位【7字节】。一共有三个参数入口：原文，密钥，加密模式。</li>
+<li>3DES 比较老的对称加密算法，加长了密钥长度，可以为 112位【14字节】 或 168位【21字节】。</li>
+<li>RSA　非对称加密，有公钥和私钥。公钥可公开给公众对数据加密，私钥则是私人对数据解密不能公开。</li>
+</ul>
+<p>资源：<a href="https://gitee.com/liones/encrypt_decrypt">gitee 仓库</a>、<a href="https://blog.csdn.net/lgxzzz/article/details/124896121">网文</a><br>
+MD5 原作者：<a href="https://github.com/chudongfang/HappyChat"><del>仓库</del></a>、<a href="https://blog.csdn.net/chudongfang2015/article/details/51736426">作者博文</a><br>
+AES 原作者：<a href="https://github.com/matt-wu/AES">仓库</a>、<a href="https://blog.csdn.net/shaosunrise/article/details/80219950">作者博文</a></p>
+<p>特别说明：《rijndael.c》《3des.h》可能是基于 linux 系统开发，它们里面的头文件包含要改为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span></code></pre></div><p>2、环境要求  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">环境</th>
+<th style="text-align:left">要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">软件环境</td>
+<td style="text-align:left">无特别要求</td>
+</tr>
+<tr>
+<td style="text-align:left">硬件环境</td>
+<td style="text-align:left">有一定要求</td>
+</tr>
+<tr>
+<td style="text-align:left">依赖环境</td>
+<td style="text-align:left">无特别要求</td>
+</tr>
+</tbody>
+</table>
+<h3 id="二移植">二、移植</h3>
+<p>1、添加源文件<br>
+将模块源文件、文件包含路径添加到工程，示例：</p>
+<p><img src="../img/20230224_2_01.jpg" alt="添加源文件到工程"></p>
+<p>2、包含头文件<br>
+在使用模块的应用程序中加入头文件包含，示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;md5.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;rijndael.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;3des.h&#34;</span><span style="color:#75715e">
+</span></code></pre></div><h3 id="三使用">三、使用</h3>
+<p>1、MD5 应用示例</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;md5.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+MD5_CTX md5; <span style="color:#75715e">//MD5对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> encrypt[<span style="color:#ae81ff">13</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">222</span>, <span style="color:#ae81ff">11</span>, <span style="color:#ae81ff">83</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">189</span>, <span style="color:#ae81ff">21</span>, <span style="color:#ae81ff">48</span>}; <span style="color:#75715e">//要运算的数据
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> decrypt[<span style="color:#ae81ff">16</span>]; <span style="color:#75715e">//结果寄存器
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//每次运算 MD5 码，必须依次调用 3 个函数进行操作
+</span><span style="color:#75715e"></span>MD5Init(<span style="color:#f92672">&amp;</span>md5);                             <span style="color:#75715e">//初始化
+</span><span style="color:#75715e"></span>MD5Update(<span style="color:#f92672">&amp;</span>md5, encrypt, <span style="color:#66d9ef">sizeof</span>(encrypt)); <span style="color:#75715e">//导入数据（此处可以多次导入多段数据） 【备注：进行初步分组加密】
+</span><span style="color:#75715e"></span>MD5Final(<span style="color:#f92672">&amp;</span>md5, decrypt);                   <span style="color:#75715e">//计算并输出 16 字节 MD5 到 decrypt[]【备注：进行后序的补足】
+</span><span style="color:#75715e"></span>
+</code></pre></div><p>2、AES 应用示例<br>
+待续……</p>
+<p>3、DES 应用示例<br>
+待续……</p>
 
           </section>
       </p>
@@ -148,8 +180,8 @@ make debug     //调试
             XT
         
         
-        <time class="post-date" datetime="2022-11-28T00:00:00Z">
-            28 Nov 2022
+        <time class="post-date" datetime="2023-02-24T00:00:00Z">
+            24 Feb 2023
         </time>
     </footer>
 </article>
@@ -165,7 +197,7 @@ make debug     //调试
 
 
     <footer class="site-footer clearfix">
-        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2022</section>
+        <section class="copyright"><a href="">XT 技术联合小组</a> All rights reserved - 2023</section>
         
         <section class="poweredby">Proudly generated by <a class="icon-hugo" href="https://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/syui/hugo-theme-air">hugo-theme-air</a> theme</section>
         
